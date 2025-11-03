@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 import 'package:epub_plus/epub_plus.dart';
 
 void main() async {
-  const fileName = "alicesAdventuresUnderGround.epub";
+  const fileName = "slova.epub";
   String fullPath = path.join(
     io.Directory.current.path,
     "assets",
@@ -28,16 +28,16 @@ void main() async {
   });
 
   group('EpubReader', () {
-    test("Epub version", () async {
+    test("Epub version", () {
       expect(epubRef.schema?.package?.version, equals(EpubVersion.epub2));
     });
 
-    test("Chapters count", () async {
+    test("Chapters count", () {
       var t = epubRef.getChapters();
       expect(t.length, equals(2));
     });
 
-    test("Author and title", () async {
+    test("Author and title", () {
       expect(epubRef.author, equals("Lewis Carroll"));
       expect(
         epubRef.title,
