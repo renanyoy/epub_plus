@@ -1,3 +1,8 @@
+# 5.1.0
+
+- Updated dependency constraints
+- General code refactoring
+
 # 5.0.1
 - Remove deprecated examples
 - Remove unused dependencies
