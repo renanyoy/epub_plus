@@ -1,28 +1,20 @@
-# epub_plus
+// ignore_for_file: unused_local_variable
 
-It package is [dart-epub](https://github.com/orthros/dart-epub) fork
+import 'dart:io' as io;
 
-[Flutter UI implementation](https://pub.dev/packages/epub_view)
+import 'package:path/path.dart' as path;
+import 'package:epub_plus/epub_plus.dart';
+import 'package:collection/collection.dart';
 
-Epub Reader and Writer for Dart inspired by [this fantastic C# Epub Reader](https://github.com/versfx/EpubReader)
-
-This does not rely on the ```dart:io``` package in any way, so it is avilable for both desktop and web-based implementations
-
-[![pub package](https://img.shields.io/pub/v/epub_plus.svg)](https://pub.dartlang.org/packages/epub_plus)
-## Installing
-Add the package to the ```dependencies``` section of your pubspec.yaml
-```yaml
-dependencies:
-  epub_plus: any
-```
-
-## Example
-```dart
-
+void main(List<String> args) async {
   //Get the epub into memory somehow
-  String fileName = 'sample.epub';
-  String fullPath = path.join(io.Directory.current.path, fileName);
-  var targetFile = new io.File(fullPath);
+  String fileName = "alicesAdventuresUnderGround.epub";
+  String fullPath = path.join(
+    io.Directory.current.path,
+    'assets',
+    fileName,
+  );
+  var targetFile = io.File(fullPath);
   List<int> bytes = await targetFile.readAsBytes();
 
   // Opens a book and reads all of its content into the memory
@@ -45,7 +37,7 @@ dependencies:
   // CHAPTERS
 
   // Enumerating chapters
-  epubBook.chapters.forEach((EpubChapter chapter) {
+  for (var chapter in epubBook.chapters) {
     // Title of chapter
     String? chapterTitle = chapter.title;
 
@@ -54,7 +46,7 @@ dependencies:
 
     // Nested chapters
     List<EpubChapter> subChapters = chapter.subChapters;
-  });
+  }
 
   // CONTENT
 
@@ -128,4 +120,4 @@ dependencies:
     // Read the book into a new object!
     var newBook = await EpubReader.readBook(written);
   }
-```
+}
