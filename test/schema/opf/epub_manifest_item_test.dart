@@ -1,9 +1,9 @@
-library epubreadertest;
+library;
 
 import 'package:epub_plus/src/schema/opf/epub_manifest_item.dart';
 import 'package:test/test.dart';
 
-main() async {
+Future<void> main() async {
   var reference = EpubManifestItem(
       fallback: "Some Fallback",
       fallbackStyle: "A Very Stylish Fallback",

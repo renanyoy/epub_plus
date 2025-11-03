@@ -1,4 +1,4 @@
-library epubreadertest;
+library;
 
 import 'dart:math' show Random;
 
@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 import '../../random_data_generator.dart';
 
-main() async {
+Future<void> main() async {
   RandomDataGenerator generator = RandomDataGenerator(Random(123445), 10);
 
   var reference = generator.randomEpubGuide();

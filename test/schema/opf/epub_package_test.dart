@@ -1,4 +1,4 @@
-library epubreadertest;
+library;
 
 import 'dart:math';
 
@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 import '../../random_data_generator.dart';
 
-main() async {
+Future<void> main() async {
   final int length = 10;
 
   final RandomDataGenerator generator =

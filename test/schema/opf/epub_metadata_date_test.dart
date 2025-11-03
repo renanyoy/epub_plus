@@ -1,9 +1,9 @@
-library epubreadertest;
+library;
 
 import 'package:epub_plus/src/schema/opf/epub_metadata_date.dart';
 import 'package:test/test.dart';
 
-main() async {
+Future<void> main() async {
   var reference = EpubMetadataDate(
     date: "a date",
     event: "Some important event",

@@ -1,4 +1,4 @@
-library epubreadertest;
+library;
 
 import 'dart:io' as io;
 
@@ -6,7 +6,7 @@ import 'package:epub_plus/epub_plus.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
-main() async {
+Future<void> main() async {
   String fileName = "alicesAdventuresUnderGround.epub";
   String fullPath =
       path.join(io.Directory.current.path, "test", "res", fileName);

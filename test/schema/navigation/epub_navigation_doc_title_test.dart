@@ -1,4 +1,4 @@
-library epubreadertest;
+library;
 
 import 'dart:math';
 
@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 import '../../random_data_generator.dart';
 
-main() async {
+Future<void> main() async {
   final generator = RandomDataGenerator(Random(7898), 10);
   final EpubNavigationDocTitle reference = generator.randomNavigationDocTitle();
 

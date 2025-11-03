@@ -1,4 +1,4 @@
-library epubtest;
+library;
 
 import 'package:test/test.dart';
 
