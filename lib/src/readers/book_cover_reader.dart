@@ -31,6 +31,9 @@ extension BookCoverReaderExt on EpubBookRef {
       coverManifestItem ??= schema?.package?.manifest?.items
           .firstWhereOrNull((manifestItem) =>
               manifestItem.id?.toLowerCase().endsWith(coverId) ?? false);
+      coverManifestItem ??= schema?.package?.manifest?.items
+          .firstWhereOrNull((manifestItem) =>
+              manifestItem.id?.toLowerCase().contains(coverId) ?? false);
     }
     if (coverManifestItem == null) {
       throw Exception(
