@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:xml/xml.dart';
 
 import 'epub_manifest_item.dart';
 
@@ -19,4 +20,73 @@ class EpubManifest {
 
     return listEquals(other.items, items);
   }
+
+    factory EpubManifest.fromXml(XmlElement manifestNode) {
+    final items = <EpubManifestItem>[];
+    manifestNode.children
+        .whereType<XmlElement>()
+        .forEach((XmlElement manifestItemNode) {
+      if (manifestItemNode.name.local.toLowerCase() == 'item') {
+        String? id,
+            href,
+            mediaType,
+            mediaOverlay,
+            requiredNamespace,
+            requiredModules,
+            fallback,
+            fallbackStyle,
+            properties;
+        for (var manifestItemNodeAttribute in manifestItemNode.attributes) {
+          var attributeValue = manifestItemNodeAttribute.value;
+          switch (manifestItemNodeAttribute.name.local.toLowerCase()) {
+            case 'id':
+              id = attributeValue;
+            case 'href':
+              href = attributeValue;
+            case 'media-type':
+              mediaType = attributeValue;
+            case 'media-overlay':
+              mediaOverlay = attributeValue;
+            case 'required-namespace':
+              requiredNamespace = attributeValue;
+            case 'required-modules':
+              requiredModules = attributeValue;
+            case 'fallback':
+              fallback = attributeValue;
+            case 'fallback-style':
+              fallbackStyle = attributeValue;
+            case 'properties':
+              properties = attributeValue;
+          }
+        }
+
+        if (id == null || id.isEmpty) {
+          throw Exception('Incorrect EPUB manifest: item ID is missing');
+        }
+        if (href == null || href.isEmpty) {
+          throw Exception('Incorrect EPUB manifest: item href is missing');
+        }
+        if (mediaType == null || mediaType.isEmpty) {
+          throw Exception(
+            'Incorrect EPUB manifest: item media type is missing',
+          );
+        }
+        final manifestItem = EpubManifestItem(
+          id: id,
+          href: href,
+          mediaType: mediaType,
+          mediaOverlay: mediaOverlay,
+          requiredNamespace: requiredNamespace,
+          requiredModules: requiredModules,
+          fallback: fallback,
+          fallbackStyle: fallbackStyle,
+          properties: properties,
+        );
+
+        items.add(manifestItem);
+      }
+    });
+    return EpubManifest(items: items);
+  }
+
 }

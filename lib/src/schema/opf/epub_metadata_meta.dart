@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:xml/xml.dart';
 
 class EpubMetadataMeta {
   final String? name;
@@ -42,5 +43,57 @@ class EpubMetadataMeta {
         other.property == property &&
         other.scheme == scheme &&
         mapEquals(other.attributes, attributes);
+  }
+
+  factory EpubMetadataMeta.fromXmlVersion2(
+    XmlElement metadataMetaNode,
+  ) {
+    String? name, content;
+    for (final attribute in metadataMetaNode.attributes) {
+      final attributeValue = attribute.value;
+
+      switch (attribute.name.local.toLowerCase()) {
+        case 'name':
+          name = attributeValue;
+        case 'content':
+          content = attributeValue;
+      }
+    }
+    return EpubMetadataMeta(
+      name: name,
+      content: content,
+    );
+  }
+
+  factory EpubMetadataMeta.fromXmlVersion3(XmlElement metadataMetaNode) {
+    final attributes = <String, String>{};
+    String? id, refines, property, scheme, content;
+    for (var metadataMetaNodeAttribute in metadataMetaNode.attributes) {
+      final attributeValue = metadataMetaNodeAttribute.value;
+
+      final name = metadataMetaNodeAttribute.name.local.toLowerCase();
+
+      attributes[name] = attributeValue;
+      switch (name) {
+        case 'id':
+          id = attributeValue;
+        case 'refines':
+          refines = attributeValue;
+        case 'property':
+          property = attributeValue;
+        case 'scheme':
+          scheme = attributeValue;
+      }
+    }
+    content = metadataMetaNode.innerText;
+
+    return EpubMetadataMeta(
+      id: id,
+      refines: refines,
+      property: property,
+      scheme: scheme,
+      content: content,
+      attributes: attributes,
+    );
   }
 }

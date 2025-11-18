@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:xml/xml.dart';
 
 class EpubNavigationDocTitle {
   final List<String> titles;
@@ -16,5 +17,19 @@ class EpubNavigationDocTitle {
     final listEquals = const DeepCollectionEquality().equals;
 
     return listEquals(other.titles, titles);
+  }
+
+  factory EpubNavigationDocTitle.fromXml(
+    XmlElement docTitleNode,
+  ) {
+    final titles = <String>[];
+    docTitleNode.children.whereType<XmlElement>().forEach(
+      (XmlElement textNode) {
+        if (textNode.name.local.toLowerCase() == 'text') {
+          titles.add(textNode.innerText);
+        }
+      },
+    );
+    return EpubNavigationDocTitle(titles: titles);
   }
 }

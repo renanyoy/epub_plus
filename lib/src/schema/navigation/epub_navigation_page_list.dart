@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:xml/xml.dart';
 
 import 'epub_navigation_page_target.dart';
 
@@ -18,5 +19,19 @@ class EpubNavigationPageList {
     final listEquals = const DeepCollectionEquality().equals;
 
     return listEquals(other.targets, targets);
+  }
+
+  factory EpubNavigationPageList.fromXml(
+    XmlElement navigationPageListNode,
+  ) {
+    final targets = <EpubNavigationPageTarget>[];
+    for (final node
+        in navigationPageListNode.children.whereType<XmlElement>()) {
+      if (node.name.local.toLowerCase() == 'pagetarget') {
+        final pageTarget = EpubNavigationPageTarget.fromXml(node);
+        targets.add(pageTarget);
+      }
+    }
+    return EpubNavigationPageList(targets: targets);
   }
 }

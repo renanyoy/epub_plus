@@ -10,8 +10,7 @@ import '../ref_entities/epub_byte_content_file_ref.dart';
 
 extension BookCoverReaderExt on EpubBookRef {
   Future<images.Image?> get coverImage async {
-    final bookRef = this;
-    final metaItems = bookRef.schema?.package?.metadata?.metaItems;
+    final metaItems = schema?.package?.metadata?.metaItems;
     if (metaItems == null || metaItems.isEmpty) return null;
 
     final coverMetaItem = metaItems.firstWhereOrNull((metaItem) =>
@@ -26,10 +25,10 @@ extension BookCoverReaderExt on EpubBookRef {
     final coverId = coverMetaItem.content?.toLowerCase();
     EpubManifestItem? coverManifestItem;
     if (coverId != null) {
-      coverManifestItem = bookRef.schema?.package?.manifest?.items
+      coverManifestItem = schema?.package?.manifest?.items
           .firstWhereOrNull(
               (manifestItem) => manifestItem.id?.toLowerCase() == coverId);
-      coverManifestItem ??= bookRef.schema?.package?.manifest?.items
+      coverManifestItem ??= schema?.package?.manifest?.items
           .firstWhereOrNull((manifestItem) =>
               manifestItem.id?.toLowerCase().endsWith(coverId) ?? false);
     }
@@ -40,13 +39,13 @@ extension BookCoverReaderExt on EpubBookRef {
     }
 
     EpubByteContentFileRef? coverImageContentFileRef;
-    if (!bookRef.content.images.containsKey(coverManifestItem.href)) {
+    if (!content.images.containsKey(coverManifestItem.href)) {
       throw Exception(
         'Incorrect EPUB manifest: item with href = "${coverManifestItem.href}" is missing.',
       );
     }
 
-    coverImageContentFileRef = bookRef.content.images[coverManifestItem.href];
+    coverImageContentFileRef = content.images[coverManifestItem.href];
     var coverImageContent =
         await coverImageContentFileRef!.readContentAsBytes();
     var retval = images.decodeImage(Uint8List.fromList(coverImageContent));

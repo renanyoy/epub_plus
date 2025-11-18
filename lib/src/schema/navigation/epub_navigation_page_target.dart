@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
+import 'package:epub_plus/epub_plus.dart';
+import 'package:xml/xml.dart';
 
-import 'epub_metadata.dart';
-import 'epub_navigation_label.dart';
 import 'epub_navigation_page_target_type.dart';
 
 class EpubNavigationPageTarget {
@@ -47,4 +47,70 @@ class EpubNavigationPageTarget {
         listEquals(other.navigationLabels, navigationLabels) &&
         other.content == content;
   }
+
+  factory EpubNavigationPageTarget.fromXml(
+      XmlElement navigationPageTargetNode) {
+    String? id, value, classs, playOrder;
+
+    EpubNavigationPageTargetType? type;
+
+    for (var attribute in navigationPageTargetNode.attributes) {
+      var attributeValue = attribute.value;
+      switch (attribute.name.local.toLowerCase()) {
+        case 'id':
+          id = attributeValue;
+        case 'value':
+          value = attributeValue;
+        case 'type':
+          var converter = EnumFromString<EpubNavigationPageTargetType>(
+            EpubNavigationPageTargetType.values,
+          );
+          var type = converter.get(attributeValue);
+          type = type;
+        case 'class':
+          classs = attributeValue;
+        case 'playorder':
+          playOrder = attributeValue;
+      }
+    }
+    if (type == EpubNavigationPageTargetType.undefined) {
+      throw Exception(
+        'Incorrect EPUB navigation page target: page target type is missing.',
+      );
+    }
+    final navigationLabels = <EpubNavigationLabel>[];
+
+    EpubNavigationContent? content;
+
+    navigationPageTargetNode.children
+        .whereType<XmlElement>()
+        .forEach((XmlElement navigationPageTargetChildNode) {
+      switch (navigationPageTargetChildNode.name.local.toLowerCase()) {
+        case 'navlabel':
+          var navigationLabel =
+              EpubNavigationLabel.fromXml(navigationPageTargetChildNode);
+          navigationLabels.add(navigationLabel);
+        case 'content':
+          var content =
+              EpubNavigationContent.fromXml(navigationPageTargetChildNode);
+          content = content;
+      }
+    });
+    if (navigationLabels.isEmpty) {
+      throw Exception(
+        'Incorrect EPUB navigation page target: at least one navLabel element is required.',
+      );
+    }
+
+    return EpubNavigationPageTarget(
+      id: id,
+      value: value,
+      type: type,
+      classs: classs,
+      playOrder: playOrder,
+      navigationLabels: navigationLabels,
+      content: content,
+    );
+  }
+
 }

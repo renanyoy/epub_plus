@@ -1,3 +1,5 @@
+import 'package:xml/xml.dart';
+
 class EpubMetadataIdentifier {
   final String? id;
   final String? scheme;
@@ -19,5 +21,24 @@ class EpubMetadataIdentifier {
     return other.id == id &&
         other.scheme == scheme &&
         other.identifier == identifier;
+  }
+
+  factory EpubMetadataIdentifier.fromXml(XmlElement metadataIdentifierNode) {
+    String? id, scheme, identifier;
+    for (final attribute in metadataIdentifierNode.attributes) {
+      final attributeValue = attribute.value;
+      switch (attribute.name.local.toLowerCase()) {
+        case 'id':
+          id = attributeValue;
+        case 'scheme':
+          scheme = attributeValue;
+      }
+    }
+    identifier = metadataIdentifierNode.innerText;
+    return EpubMetadataIdentifier(
+      id: id,
+      scheme: scheme,
+      identifier: identifier,
+    );
   }
 }

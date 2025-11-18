@@ -1,7 +1,8 @@
 import 'package:collection/collection.dart';
+import 'package:epub_plus/epub_plus.dart';
+import 'package:xml/xml.dart';
 
 import 'epub_metadata_contributor.dart';
-import 'epub_metadata_creator.dart';
 import 'epub_metadata_date.dart';
 import 'epub_metadata_identifier.dart';
 import 'epub_metadata_meta.dart';
@@ -86,5 +87,76 @@ class EpubMetadata {
         listEquals(other.coverages, coverages) &&
         listEquals(other.rights, rights) &&
         listEquals(other.metaItems, metaItems);
+  }
+
+  factory EpubMetadata.fromXml(
+    XmlElement metadataNode,
+    EpubVersion? epubVersion,
+  ) {
+    String? description;
+    final titles = <String>[];
+    final creators = <EpubMetadataCreator>[];
+    final subjects = <String>[];
+    final publishers = <String>[];
+    final contributors = <EpubMetadataContributor>[];
+    final dates = <EpubMetadataDate>[];
+    final types = <String>[];
+    final formats = <String>[];
+    final identifiers = <EpubMetadataIdentifier>[];
+    final sources = <String>[];
+    final languages = <String>[];
+    final relations = <String>[];
+    final coverages = <String>[];
+    final rights = <String>[];
+    final metaItems = <EpubMetadataMeta>[];
+    metadataNode.children.whereType<XmlElement>().forEach(
+      (XmlElement metadataItemNode) {
+        final innerText = metadataItemNode.innerText;
+
+        return switch (metadataItemNode.name.local.toLowerCase()) {
+          'title' => titles.add(innerText),
+          'creator' =>
+            creators.add(EpubMetadataCreator.fromXml(metadataItemNode)),
+          'subject' => subjects.add(innerText),
+          'description' => description = innerText,
+          'publisher' => publishers.add(innerText),
+          'contributor' =>
+            contributors.add(EpubMetadataContributor.fromXml(metadataItemNode)),
+          'date' => dates.add(EpubMetadataDate.fromXml(metadataItemNode)),
+          'type' => types.add(innerText),
+          'format' => formats.add(innerText),
+          'identifier' =>
+            identifiers.add(EpubMetadataIdentifier.fromXml(metadataItemNode)),
+          'source' => sources.add(innerText),
+          'language' => languages.add(innerText),
+          'relation' => relations.add(innerText),
+          'coverage' => coverages.add(innerText),
+          'rights' => rights.add(innerText),
+          'meta' when epubVersion == EpubVersion.epub2 =>
+            metaItems.add(EpubMetadataMeta.fromXmlVersion2(metadataItemNode)),
+          'meta' when epubVersion == EpubVersion.epub3 =>
+            metaItems.add(EpubMetadataMeta.fromXmlVersion3(metadataItemNode)),
+          _ => null,
+        };
+      },
+    );
+    return EpubMetadata(
+      titles: titles,
+      creators: creators,
+      subjects: subjects,
+      description: description,
+      publishers: publishers,
+      contributors: contributors,
+      dates: dates,
+      types: types,
+      formats: formats,
+      identifiers: identifiers,
+      sources: sources,
+      languages: languages,
+      relations: relations,
+      coverages: coverages,
+      rights: rights,
+      metaItems: metaItems,
+    );
   }
 }

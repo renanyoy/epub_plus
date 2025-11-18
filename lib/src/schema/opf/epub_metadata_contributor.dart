@@ -1,3 +1,5 @@
+import 'package:xml/xml.dart';
+
 class EpubMetadataContributor {
   final String? contributor;
   final String? fileAs;
@@ -19,5 +21,24 @@ class EpubMetadataContributor {
     return other.contributor == contributor &&
         other.fileAs == fileAs &&
         other.role == role;
+  }
+
+  factory EpubMetadataContributor.fromXml(XmlElement metadataContributorNode) {
+    String? contributor, role, fileAs;
+    for (final attribute in metadataContributorNode.attributes) {
+      final attributeValue = attribute.value;
+      switch (attribute.name.local.toLowerCase()) {
+        case 'role':
+          role = attributeValue;
+        case 'file-as':
+          fileAs = attributeValue;
+      }
+    }
+    contributor = metadataContributorNode.innerText;
+    return EpubMetadataContributor(
+      contributor: contributor,
+      role: role,
+      fileAs: fileAs,
+    );
   }
 }
