@@ -5,6 +5,8 @@ import 'dart:convert' as convert;
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:xml/xml.dart' as xml;
 
+import '../utils/zip_path_utils.dart';
+
 extension RootFilePathReaderExt on Archive {
   Future<String?> get epubRootFilePath async {
     const epubContainerFilePath = 'META-INF/container.xml';
@@ -33,4 +35,7 @@ extension RootFilePathReaderExt on Archive {
 
     return rootFileElement.getAttribute('full-path');
   }
+
+  Future<String> get epubContentDirectoryPath async =>
+      ZipPathUtils.getDirectoryPath((await epubRootFilePath)!);
 }

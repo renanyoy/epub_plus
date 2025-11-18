@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:archive/archive.dart';
 import 'dart:convert' as convert;
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:epub_plus/src/readers/package_reader.dart';
 import 'package:epub_plus/src/schema/opf/epub_version.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:path/path.dart' as path;
@@ -21,17 +22,18 @@ import '../schema/navigation/epub_navigation_page_target.dart';
 import '../schema/navigation/epub_navigation_page_target_type.dart';
 import '../schema/navigation/epub_navigation_point.dart';
 import '../schema/navigation/epub_navigation_target.dart';
-import '../schema/opf/epub_package.dart';
 import '../utils/enum_from_string.dart';
 import '../utils/zip_path_utils.dart';
+import 'root_file_path_reader.dart';
 
 // ignore: omit_local_variable_types
 
-class NavigationReader {
-  static String? _tocFileEntryPath;
-
-  static Future<EpubNavigation> readNavigation(Archive epubArchive,
-      String contentDirectoryPath, EpubPackage package) async {
+extension NavigationReaderExt on Archive {
+  Future<EpubNavigation> get epubNavigation async {
+    final package = await epubPackage;
+    final rootFilePath = (await epubRootFilePath)!;
+    final contentDirectoryPath = ZipPathUtils.getDirectoryPath(rootFilePath);
+    String? tocFileEntryPath;
     if (package.version == EpubVersion.epub2) {
       var tocId = package.spine?.tableOfContents;
       if (tocId == null || tocId.isEmpty) {
@@ -48,14 +50,14 @@ class NavigationReader {
         );
       }
 
-      _tocFileEntryPath =
+      tocFileEntryPath =
           ZipPathUtils.combine(contentDirectoryPath, tocManifestItem.href);
-      final tocFileEntry = epubArchive.files.firstWhereOrNull(
-        (file) => file.name.toLowerCase() == _tocFileEntryPath?.toLowerCase(),
+      final tocFileEntry = files.firstWhereOrNull(
+        (file) => file.name.toLowerCase() == tocFileEntryPath?.toLowerCase(),
       );
       if (tocFileEntry == null) {
         throw Exception(
-          'EPUB parsing error: TOC file $_tocFileEntryPath not found in archive.',
+          'EPUB parsing error: TOC file $tocFileEntryPath not found in archive.',
         );
       }
 
@@ -82,7 +84,7 @@ class NavigationReader {
         );
       }
 
-      final navigationHead = readNavigationHead(headNode);
+      final navigationHead = _readNavigationHead(headNode);
 
       final docTitleNode =
           ncxNode.findElements('docTitle', namespace: ncxNamespace).firstOrNull;
@@ -93,11 +95,11 @@ class NavigationReader {
         );
       }
 
-      final navigationDocTitle = readNavigationDocTitle(docTitleNode);
+      final navigationDocTitle = _readNavigationDocTitle(docTitleNode);
       final docAuthors = ncxNode
           .findElements('docAuthor', namespace: ncxNamespace)
           .map<EpubNavigationDocAuthor>(
-            (docAuthorNode) => readNavigationDocAuthor(docAuthorNode),
+            (docAuthorNode) => _readNavigationDocAuthor(docAuthorNode),
           )
           .toList();
 
@@ -109,18 +111,18 @@ class NavigationReader {
         );
       }
 
-      final navMap = readNavigationMap(navMapNode);
+      final navMap = _readNavigationMap(navMapNode);
       final pageListNode =
           ncxNode.findElements('pageList', namespace: ncxNamespace).firstOrNull;
       final pageList = switch (pageListNode) {
-        xml.XmlElement element => readNavigationPageList(element),
+        xml.XmlElement element => _readNavigationPageList(element),
         null => null,
       };
 
       final navLists = ncxNode
           .findElements('navList', namespace: ncxNamespace)
           .map<EpubNavigationList>(
-            (navigationListNode) => readNavigationList(navigationListNode),
+            (navigationListNode) => _readNavigationList(navigationListNode),
           )
           .toList();
 
@@ -144,19 +146,19 @@ class NavigationReader {
         );
       }
 
-      _tocFileEntryPath =
+      tocFileEntryPath =
           ZipPathUtils.combine(contentDirectoryPath, tocManifestItem.href);
-      final tocFileEntry = epubArchive.files.firstWhereOrNull(
-        (file) => file.name.toLowerCase() == _tocFileEntryPath!.toLowerCase(),
+      final tocFileEntry = files.firstWhereOrNull(
+        (file) => file.name.toLowerCase() == tocFileEntryPath!.toLowerCase(),
       );
       if (tocFileEntry == null) {
         throw Exception(
-          'EPUB parsing error: TOC file $_tocFileEntryPath not found in archive.',
+          'EPUB parsing error: TOC file $tocFileEntryPath not found in archive.',
         );
       }
       //Get relative toc file path
-      _tocFileEntryPath =
-          '${((_tocFileEntryPath!.split('/')..removeLast())..removeAt(0)).join('/')}/';
+      tocFileEntryPath =
+          '${((tocFileEntryPath!.split('/')..removeLast())..removeAt(0)).join('/')}/';
 
       var containerDocument =
           xml.XmlDocument.parse(convert.utf8.decode(tocFileEntry.content));
@@ -179,7 +181,7 @@ class NavigationReader {
       }
       final navMapNode = navNode.findElements('ol').single;
 
-      final navMap = readNavigationMapV3(navMapNode);
+      final navMap = _readNavigationMapV3(tocFileEntryPath, navMapNode);
 
       //TODO : Implement pagesLists
 //      xml.XmlElement pageListNode = ncxNode
@@ -197,7 +199,7 @@ class NavigationReader {
     }
   }
 
-  static EpubNavigationContent readNavigationContent(
+  static EpubNavigationContent _readNavigationContent(
     xml.XmlElement navigationContentNode,
   ) {
     String? id, source;
@@ -223,7 +225,8 @@ class NavigationReader {
     );
   }
 
-  static EpubNavigationContent readNavigationContentV3(
+  static EpubNavigationContent _readNavigationContentV3(
+    String tocFileEntryPath,
     xml.XmlElement navigationContentNode,
   ) {
     String? id, source;
@@ -235,11 +238,11 @@ class NavigationReader {
         case 'id':
           id = attributeValue;
         case 'href':
-          if (_tocFileEntryPath!.length < 2 ||
-              attributeValue.startsWith(_tocFileEntryPath!)) {
+          if (tocFileEntryPath.length < 2 ||
+              attributeValue.startsWith(tocFileEntryPath)) {
             source = attributeValue;
           } else {
-            source = path.normalize(_tocFileEntryPath! + attributeValue);
+            source = path.normalize(tocFileEntryPath + attributeValue);
           }
       }
     }
@@ -253,8 +256,8 @@ class NavigationReader {
       source: source,
     );
   }
-
-  static String extractContentPath(String tocFileEntryPath, String ref) {
+/*
+  static String _extractContentPath(String tocFileEntryPath, String ref) {
     if (!tocFileEntryPath.endsWith('/')) {
       tocFileEntryPath = '$tocFileEntryPath/';
     }
@@ -264,8 +267,8 @@ class NavigationReader {
     r = r.replaceAll(RegExp(r'^[^/]+/\.\./'), '');
     return r;
   }
-
-  static EpubNavigationDocAuthor readNavigationDocAuthor(
+*/
+  static EpubNavigationDocAuthor _readNavigationDocAuthor(
     xml.XmlElement docAuthorNode,
   ) {
     final authors = <String>[];
@@ -279,7 +282,7 @@ class NavigationReader {
     return EpubNavigationDocAuthor(authors: authors);
   }
 
-  static EpubNavigationDocTitle readNavigationDocTitle(
+  static EpubNavigationDocTitle _readNavigationDocTitle(
     xml.XmlElement docTitleNode,
   ) {
     final titles = <String>[];
@@ -293,7 +296,7 @@ class NavigationReader {
     return EpubNavigationDocTitle(titles: titles);
   }
 
-  static EpubNavigationHead readNavigationHead(xml.XmlElement headNode) {
+  static EpubNavigationHead _readNavigationHead(xml.XmlElement headNode) {
     final metadata = <EpubNavigationHeadMeta>[];
 
     headNode.children.whereType<xml.XmlElement>().forEach(
@@ -338,7 +341,7 @@ class NavigationReader {
     return EpubNavigationHead(metadata: metadata);
   }
 
-  static EpubNavigationLabel readNavigationLabel(
+  static EpubNavigationLabel _readNavigationLabel(
     xml.XmlElement navigationLabelNode,
   ) {
     var navigationLabelTextNode = navigationLabelNode
@@ -355,14 +358,14 @@ class NavigationReader {
     return EpubNavigationLabel(text: text);
   }
 
-  static EpubNavigationLabel readNavigationLabelV3(
+  static EpubNavigationLabel _readNavigationLabelV3(
     xml.XmlElement navigationLabelNode,
   ) {
     final text = navigationLabelNode.innerText.trim();
     return EpubNavigationLabel(text: text);
   }
 
-  static EpubNavigationList readNavigationList(
+  static EpubNavigationList _readNavigationList(
     xml.XmlElement navigationListNode,
   ) {
     String? id, classs;
@@ -384,10 +387,10 @@ class NavigationReader {
         in navigationListNode.children.whereType<xml.XmlElement>()) {
       switch (node.name.local.toLowerCase()) {
         case 'navlabel':
-          final navigationLabel = readNavigationLabel(node);
+          final navigationLabel = _readNavigationLabel(node);
           navigationLabels.add(navigationLabel);
         case 'navtarget':
-          final navigationTarget = readNavigationTarget(node);
+          final navigationTarget = _readNavigationTarget(node);
           navigationTargets.add(navigationTarget);
       }
     }
@@ -404,36 +407,37 @@ class NavigationReader {
     );
   }
 
-  static EpubNavigationMap readNavigationMap(xml.XmlElement navigationMapNode) {
+  static EpubNavigationMap _readNavigationMap(xml.XmlElement navigationMapNode) {
     final points = <EpubNavigationPoint>[];
 
     navigationMapNode.children
         .whereType<xml.XmlElement>()
         .forEach((xml.XmlElement navigationPointNode) {
       if (navigationPointNode.name.local.toLowerCase() == 'navpoint') {
-        var navigationPoint = readNavigationPoint(navigationPointNode);
+        var navigationPoint = _readNavigationPoint(navigationPointNode);
         points.add(navigationPoint);
       }
     });
     return EpubNavigationMap(points: points);
   }
 
-  static EpubNavigationMap readNavigationMapV3(
-      xml.XmlElement navigationMapNode) {
+  static EpubNavigationMap _readNavigationMapV3(
+      String tocFileEntryPath, xml.XmlElement navigationMapNode) {
     final points = <EpubNavigationPoint>[];
 
     navigationMapNode.children
         .whereType<xml.XmlElement>()
         .forEach((xml.XmlElement navigationPointNode) {
       if (navigationPointNode.name.local.toLowerCase() == 'li') {
-        var navigationPoint = readNavigationPointV3(navigationPointNode);
+        var navigationPoint =
+            _readNavigationPointV3(tocFileEntryPath, navigationPointNode);
         points.add(navigationPoint);
       }
     });
     return EpubNavigationMap(points: points);
   }
 
-  static EpubNavigationPageList readNavigationPageList(
+  static EpubNavigationPageList _readNavigationPageList(
     xml.XmlElement navigationPageListNode,
   ) {
     final targets = <EpubNavigationPageTarget>[];
@@ -441,7 +445,7 @@ class NavigationReader {
     for (final node
         in navigationPageListNode.children.whereType<xml.XmlElement>()) {
       if (node.name.local.toLowerCase() == 'pagetarget') {
-        final pageTarget = readNavigationPageTarget(node);
+        final pageTarget = _readNavigationPageTarget(node);
         targets.add(pageTarget);
       }
     }
@@ -449,7 +453,7 @@ class NavigationReader {
     return EpubNavigationPageList(targets: targets);
   }
 
-  static EpubNavigationPageTarget readNavigationPageTarget(
+  static EpubNavigationPageTarget _readNavigationPageTarget(
       xml.XmlElement navigationPageTargetNode) {
     String? id, value, classs, playOrder;
 
@@ -489,10 +493,10 @@ class NavigationReader {
       switch (navigationPageTargetChildNode.name.local.toLowerCase()) {
         case 'navlabel':
           var navigationLabel =
-              readNavigationLabel(navigationPageTargetChildNode);
+              _readNavigationLabel(navigationPageTargetChildNode);
           navigationLabels.add(navigationLabel);
         case 'content':
-          var content = readNavigationContent(navigationPageTargetChildNode);
+          var content = _readNavigationContent(navigationPageTargetChildNode);
           content = content;
       }
     });
@@ -513,7 +517,7 @@ class NavigationReader {
     );
   }
 
-  static EpubNavigationPoint readNavigationPoint(
+  static EpubNavigationPoint _readNavigationPoint(
       xml.XmlElement navigationPointNode) {
     String? id, classs, playOrder;
     for (final attribute in navigationPointNode.attributes) {
@@ -538,14 +542,14 @@ class NavigationReader {
       (xml.XmlElement navigationPointChildNode) {
         switch (navigationPointChildNode.name.local.toLowerCase()) {
           case 'navlabel':
-            var navigationLabel = readNavigationLabel(navigationPointChildNode);
+            var navigationLabel = _readNavigationLabel(navigationPointChildNode);
             navigationLabels.add(navigationLabel);
           case 'content':
-            final navContent = readNavigationContent(navigationPointChildNode);
+            final navContent = _readNavigationContent(navigationPointChildNode);
             content = navContent;
           case 'navpoint':
             var childNavigationPoint =
-                readNavigationPoint(navigationPointChildNode);
+                _readNavigationPoint(navigationPointChildNode);
             childNavigationPoints.add(childNavigationPoint);
         }
       },
@@ -572,7 +576,8 @@ class NavigationReader {
     );
   }
 
-  static EpubNavigationPoint readNavigationPointV3(
+  static EpubNavigationPoint _readNavigationPointV3(
+    String tocFileEntryPath,
     xml.XmlElement navigationPointNode,
   ) {
     String? id, classs, playOrder;
@@ -586,14 +591,15 @@ class NavigationReader {
         switch (navigationPointChildNode.name.local.toLowerCase()) {
           case 'a':
           case 'span':
-            final label = readNavigationLabelV3(navigationPointChildNode);
+            final label = _readNavigationLabelV3(navigationPointChildNode);
             navigationLabels.add(label);
-            final navContent =
-                readNavigationContentV3(navigationPointChildNode);
+            final navContent = _readNavigationContentV3(
+                tocFileEntryPath, navigationPointChildNode);
             content = navContent;
           case 'ol':
-            for (final point
-                in readNavigationMapV3(navigationPointChildNode).points) {
+            for (final point in _readNavigationMapV3(
+                    tocFileEntryPath, navigationPointChildNode)
+                .points) {
               childNavigationPoints.add(point);
             }
         }
@@ -621,7 +627,7 @@ class NavigationReader {
     );
   }
 
-  static EpubNavigationTarget readNavigationTarget(
+  static EpubNavigationTarget _readNavigationTarget(
       xml.XmlElement navigationTargetNode) {
     String? id, classs, value, playOrder;
 
@@ -653,10 +659,10 @@ class NavigationReader {
       (xml.XmlElement navigationTargetChildNode) {
         switch (navigationTargetChildNode.name.local.toLowerCase()) {
           case 'navlabel':
-            final label = readNavigationLabel(navigationTargetChildNode);
+            final label = _readNavigationLabel(navigationTargetChildNode);
             navigationLabels.add(label);
           case 'content':
-            final navContent = readNavigationContent(navigationTargetChildNode);
+            final navContent = _readNavigationContent(navigationTargetChildNode);
             content = navContent;
         }
       },

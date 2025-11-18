@@ -51,9 +51,7 @@ class EpubReader {
     } else {
       loadedBytes = bytes;
     }
-
-    var epubArchive = ZipDecoder().decodeBytes(loadedBytes);
-
+    final epubArchive = ZipDecoder().decodeBytes(loadedBytes);
     final schema = await epubArchive.epubSchema;
     final title = schema.package!.metadata!.titles
         .firstWhere((String name) => true, orElse: () => '');
@@ -75,7 +73,6 @@ class EpubReader {
   /// Opens the book asynchronously and reads all of its content into the memory. Does not hold the handle to the EPUB file.
   static Future<EpubBook> readBook(FutureOr<List<int>> bytes) async {
     List<int> loadedBytes = await bytes;
-
     var epubBookRef = await openBook(loadedBytes);
     final schema = epubBookRef.schema;
     final title = epubBookRef.title;
