@@ -1,22 +1,16 @@
 import 'dart:async';
 
 import 'package:archive/archive.dart';
+import 'package:epub_plus/epub_plus.dart';
+import 'package:epub_plus/src/readers/chapter_reader.dart';
 
-import 'entities/epub_book.dart';
-import 'entities/epub_byte_content_file.dart';
-import 'entities/epub_chapter.dart';
-import 'entities/epub_content.dart';
-import 'entities/epub_content_file.dart';
-import 'entities/epub_text_content_file.dart';
+import 'readers/book_cover_reader.dart';
 import 'readers/content_reader.dart';
 import 'readers/schema_reader.dart';
-import 'ref_entities/epub_book_ref.dart';
 import 'ref_entities/epub_byte_content_file_ref.dart';
-import 'ref_entities/epub_chapter_ref.dart';
 import 'ref_entities/epub_content_file_ref.dart';
 import 'ref_entities/epub_content_ref.dart';
 import 'ref_entities/epub_text_content_file_ref.dart';
-import 'schema/opf/epub_metadata_creator.dart';
 
 /// A class that provides the primary interface to read Epub files.
 ///
@@ -60,7 +54,7 @@ class EpubReader {
 
     var epubArchive = ZipDecoder().decodeBytes(loadedBytes);
 
-    final schema = await SchemaReader.readSchema(epubArchive);
+    final schema = await epubArchive.epubSchema;
     final title = schema.package!.metadata!.titles
         .firstWhere((String name) => true, orElse: () => '');
     final authors = schema.package!.metadata!.creators
@@ -69,23 +63,12 @@ class EpubReader {
         .toList();
     final author = authors.join(', ');
 
-    final bookRef = EpubBookRef(
-      epubArchive: epubArchive,
-      title: title,
-      author: author,
-      authors: authors,
-      schema: schema,
-    );
-
-    final content = ContentReader.parseContentMap(bookRef);
-
     return EpubBookRef(
       epubArchive: epubArchive,
       title: title,
       author: author,
       authors: authors,
       schema: schema,
-      content: content,
     );
   }
 
@@ -98,11 +81,13 @@ class EpubReader {
     final title = epubBookRef.title;
     final authors = epubBookRef.authors;
     final author = epubBookRef.author;
-    final content = await readContent(epubBookRef.content!);
-    final coverImage = await epubBookRef.readCover();
-    final chapterRefs = epubBookRef.getChapters();
-    final chapters = await readChapters(chapterRefs);
-
+    final content = await readContent(epubBookRef.content);
+    final coverImage = await epubBookRef.coverImage;
+    final chapterRefs = epubBookRef.chapters;
+    List<EpubChapter> chapters = await readChapters(chapterRefs);
+    if (chapters.isEmpty && schema?.package?.spine != null) {
+      chapters = await readSpines(content, schema!.package!.spine!);
+    }
     return EpubBook(
       title: title,
       author: author,
@@ -204,6 +189,28 @@ class EpubReader {
         subChapters: subChapters,
       );
 
+      result.add(chapter);
+    });
+    return result;
+  }
+
+  static Future<List<EpubChapter>> readSpines(
+      EpubContent content, EpubSpine spine) async {
+    final result = <EpubChapter>[];
+    EpubTextContentFile? findContent(String idRef) =>
+        content.html[idRef] ??
+        content.html.entries
+            .where((e) => e.key.endsWith(idRef))
+            .firstOrNull
+            ?.value;
+
+    await Future.forEach(spine.items, (EpubSpineItemRef itemRef) async {
+      final html = findContent(itemRef.idRef!);
+      if (html == null) return;
+      final chapter = EpubChapter(
+        contentFileName: html.fileName,
+        htmlContent: html.content,
+      );
       result.add(chapter);
     });
     return result;

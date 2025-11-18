@@ -130,8 +130,7 @@ extension on EpubBookRef {
       title: title ?? this.title,
       authors: authors ?? this.authors,
       author: author ?? this.author,
-      schema: schema ?? this.schema,
-      content: content ?? this.content,
+      schema: schema ?? this.schema      
     );
   }
 }

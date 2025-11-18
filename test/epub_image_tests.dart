@@ -2,6 +2,7 @@ library;
 
 import 'dart:io' as io;
 
+import 'package:epub_plus/src/readers/book_cover_reader.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -29,7 +30,7 @@ Future<void> main() async {
   test("Test Epub Ref Image", () async {
     EpubBookRef epubRef = await EpubReader.openBook(bytes);
 
-    Image? coverImage = await epubRef.readCover();
+    Image? coverImage = await epubRef.coverImage;
 
     expect(coverImage, isNotNull);
 

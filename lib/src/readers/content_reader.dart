@@ -5,15 +5,15 @@ import '../ref_entities/epub_content_file_ref.dart';
 import '../ref_entities/epub_content_ref.dart';
 import '../ref_entities/epub_text_content_file_ref.dart';
 
-class ContentReader {
-  static EpubContentRef parseContentMap(EpubBookRef bookRef) {
+extension ContentReaderExt on EpubBookRef {
+  EpubContentRef get content {
     final html = <String, EpubTextContentFileRef>{};
     final css = <String, EpubTextContentFileRef>{};
     final images = <String, EpubByteContentFileRef>{};
     final fonts = <String, EpubByteContentFileRef>{};
     final allFiles = <String, EpubContentFileRef>{};
 
-    for (final manifestItem in bookRef.schema!.package!.manifest!.items) {
+    for (final manifestItem in schema!.package!.manifest!.items) {
       var fileName = manifestItem.href ?? '';
       var contentMimeType = manifestItem.mediaType!;
       var contentType = EpubContentType.fromMimeType(contentMimeType);
@@ -26,7 +26,7 @@ class ContentReader {
         case EpubContentType.dtbook:
         case EpubContentType.dtbookNCX:
           var epubTextContentFile = EpubTextContentFileRef(
-            epubBookRef: bookRef,
+            epubBookRef: this,
             fileName: Uri.decodeFull(fileName),
             contentMimeType: contentMimeType,
           );
@@ -42,7 +42,7 @@ class ContentReader {
           allFiles[fileName] = epubTextContentFile;
         default:
           var epubByteContentFile = EpubByteContentFileRef(
-            epubBookRef: bookRef,
+            epubBookRef: this,
             fileName: Uri.decodeFull(fileName),
             contentMimeType: contentMimeType,
             contentType: contentType,

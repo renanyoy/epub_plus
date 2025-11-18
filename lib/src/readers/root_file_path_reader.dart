@@ -5,11 +5,11 @@ import 'dart:convert' as convert;
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:xml/xml.dart' as xml;
 
-class RootFilePathReader {
-  static Future<String?> getRootFilePath(Archive epubArchive) async {
+extension RootFilePathReaderExt on Archive {
+  Future<String?> get epubRootFilePath async {
     const epubContainerFilePath = 'META-INF/container.xml';
 
-    var containerFileEntry = epubArchive.files.firstWhereOrNull(
+    var containerFileEntry = files.firstWhereOrNull(
         (ArchiveFile file) => file.name == epubContainerFilePath);
     if (containerFileEntry == null) {
       throw Exception(

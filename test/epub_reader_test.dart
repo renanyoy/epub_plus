@@ -2,6 +2,8 @@ library;
 
 import 'dart:io' as io;
 
+import 'package:epub_plus/src/readers/book_cover_reader.dart';
+import 'package:epub_plus/src/readers/chapter_reader.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:epub_plus/epub_plus.dart';
@@ -33,7 +35,7 @@ void main() async {
     });
 
     test("Chapters count", () {
-      var t = epubRef.getChapters();
+      var t = epubRef.chapters;
       expect(t.length, equals(2));
     });
 
@@ -47,7 +49,7 @@ void main() async {
     });
 
     test("Cover", () async {
-      final cover = await epubRef.readCover();
+      final cover = await epubRef.coverImage;
       expect(cover, isNotNull);
       expect(cover?.width, equals(581));
       expect(cover?.height, equals(1034));

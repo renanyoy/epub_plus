@@ -11,8 +11,15 @@ class ZipPathUtils {
   static String? combine(String? directory, String? fileName) {
     if (directory == null || directory == '') {
       return fileName;
-    } else {
-      return '$directory/${fileName!}';
+    } else if (fileName != null) {
+      while (fileName!.startsWith('../')) {
+        fileName = fileName.substring(3);
+        final di = directory!.lastIndexOf('/');
+        if (di < 0) return fileName;
+        directory = directory.substring(0, di);
+      }
+      return '$directory/$fileName';
     }
+    return null;
   }
 }
