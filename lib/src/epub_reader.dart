@@ -79,9 +79,15 @@ class EpubReader {
     final authors = epubBookRef.authors;
     final author = epubBookRef.author;
     final content = await readContent(epubBookRef.content);
-    final coverImage = await epubBookRef.coverImage;
-    final chapterRefs = epubBookRef.chapters;
-    List<EpubChapter> chapters = await readChapters(chapterRefs);
+    EpubByteContentFile? coverFile;
+    try {
+      coverFile = epubBookRef.coverContent?.contentFile;
+    } catch (_) {}
+    List<EpubChapter> chapters = [];
+    try {
+      final chapterRefs = epubBookRef.chapters;
+      chapters = await readChapters(chapterRefs);
+    } catch (_) {}
     if (chapters.isEmpty && schema?.package?.spine != null) {
       chapters = await readSpines(content, schema!.package!.spine!);
     }
@@ -91,7 +97,7 @@ class EpubReader {
       authors: authors,
       schema: schema,
       content: content,
-      coverImage: coverImage,
+      coverFile: coverFile,
       chapters: chapters,
     );
   }
@@ -129,8 +135,8 @@ class EpubReader {
     var result = <String, EpubTextContentFile>{};
 
     await Future.forEach(textContentFileRefs.keys, (String key) async {
-      EpubContentFileRef value = textContentFileRefs[key]!;
-      final content = await value.readContentAsText();
+      final value = textContentFileRefs[key]!;
+      final content = value.asText;
       final textContentFile = EpubTextContentFile(
         fileName: value.fileName,
         contentType: value.contentType,
@@ -155,7 +161,7 @@ class EpubReader {
   static Future<EpubByteContentFile> readByteContentFile(
     EpubContentFileRef contentFileRef,
   ) async {
-    final content = await contentFileRef.readContentAsBytes();
+    final content = contentFileRef.content;
     final result = EpubByteContentFile(
       fileName: contentFileRef.fileName,
       contentType: contentFileRef.contentType,
@@ -175,7 +181,7 @@ class EpubReader {
       final title = chapterRef.title;
       final contentFileName = chapterRef.contentFileName;
       final anchor = chapterRef.anchor;
-      final htmlContent = await chapterRef.readHtmlContent();
+      final htmlContent = chapterRef.htmlContent;
       final subChapters = await readChapters(chapterRef.subChapters);
 
       final chapter = EpubChapter(

@@ -49,7 +49,7 @@ void main() async {
     });
 
     test("Cover", () async {
-      final cover = await epubRef.coverImage;
+      final cover = epubRef.coverContent?.asImage;
       expect(cover, isNotNull);
       expect(cover?.width, equals(581));
       expect(cover?.height, equals(1034));

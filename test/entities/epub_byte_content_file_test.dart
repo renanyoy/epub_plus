@@ -1,11 +1,13 @@
 library;
 
+import 'dart:typed_data';
+
 import 'package:epub_plus/epub_plus.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
   var reference = EpubByteContentFile(
-    content: [0, 1, 2, 3],
+    content: Uint8List.fromList([0, 1, 2, 3]),
     contentMimeType: "application/test",
     contentType: EpubContentType.other,
     fileName: "orthrosFile",
@@ -23,7 +25,7 @@ Future<void> main() async {
     });
 
     test(".equals is false when Content changes", () async {
-      testFile = testFile.copyWith(content: [3, 2, 1, 0]);
+      testFile = testFile.copyWith(content: Uint8List.fromList([3, 2, 1, 0]));
       expect(testFile, isNot(reference));
     });
 
@@ -47,7 +49,7 @@ Future<void> main() async {
     });
 
     test('.hashCode changes when Content changes', () async {
-      testFile = testFile.copyWith(content: [3, 2, 1, 0]);
+      testFile = testFile.copyWith(content:Uint8List.fromList([3, 2, 1, 0]));
       expect(testFile.hashCode, isNot(reference.hashCode));
     });
 
@@ -70,7 +72,7 @@ Future<void> main() async {
 
 extension on EpubByteContentFile {
   EpubByteContentFile copyWith({
-    List<int>? content,
+    Uint8List? content,
     String? contentMimeType,
     EpubContentType? contentType,
     String? fileName,

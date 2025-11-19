@@ -1,9 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:image/image.dart';
-
-import 'epub_chapter.dart';
-import 'epub_content.dart';
-import 'epub_schema.dart';
+import 'package:epub_plus/epub_plus.dart';
 
 class EpubBook {
   final String? title;
@@ -11,7 +7,7 @@ class EpubBook {
   final List<String?> authors;
   final EpubSchema? schema;
   final EpubContent? content;
-  final Image? coverImage;
+  final EpubByteContentFile? coverFile;
   final List<EpubChapter> chapters;
 
   const EpubBook({
@@ -20,7 +16,7 @@ class EpubBook {
     this.authors = const <String>[],
     this.schema,
     this.content,
-    this.coverImage,
+    this.coverFile,
     this.chapters = const <EpubChapter>[],
   });
 
@@ -32,7 +28,7 @@ class EpubBook {
         hash(authors) ^
         schema.hashCode ^
         content.hashCode ^
-        coverImage.hashCode ^
+        coverFile.hashCode ^
         hash(chapters);
   }
 
@@ -46,7 +42,7 @@ class EpubBook {
         listEquals(other.authors, authors) &&
         other.schema == schema &&
         other.content == content &&
-        other.coverImage == coverImage &&
+        other.coverFile == coverFile &&
         listEquals(other.chapters, chapters);
   }
 }

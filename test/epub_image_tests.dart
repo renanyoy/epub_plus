@@ -20,7 +20,7 @@ Future<void> main() async {
   test("Test Epub Image", () async {
     EpubBook epubRef = await EpubReader.readBook(bytes);
 
-    expect(epubRef.coverImage, isNotNull);
+    expect(epubRef.coverFile!.asImage, isNotNull);
 
     // expect(3, epubRef.CoverImage.format);
     // expect(581, epubRef.CoverImage.width);
@@ -30,7 +30,7 @@ Future<void> main() async {
   test("Test Epub Ref Image", () async {
     EpubBookRef epubRef = await EpubReader.openBook(bytes);
 
-    Image? coverImage = await epubRef.coverImage;
+    Image? coverImage = epubRef.coverContent?.asImage;
 
     expect(coverImage, isNotNull);
 

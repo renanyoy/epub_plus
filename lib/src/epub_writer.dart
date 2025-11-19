@@ -30,7 +30,7 @@ class EpubWriter {
       if (file is EpubByteContentFile) {
         content = file.content;
       } else if (file is EpubTextContentFile) {
-        content = convert.utf8.encode(file.content!);
+        content = convert.utf8.encode(file.content);
       }
 
       arch.addFile(ArchiveFile(

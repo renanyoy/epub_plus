@@ -9,7 +9,6 @@ Future<void> main() async {
     authors: ["orthros"],
     chapters: [EpubChapter()],
     content: EpubContent(),
-    coverImage: Image(width: 100, height: 100),
     schema: EpubSchema(),
     title: "A Dissertation on Epubs",
   );
@@ -57,12 +56,6 @@ Future<void> main() async {
           contentFileName: "orthros.txt",
         );
         testBook = testBook.copyWith(chapters: [chapter]);
-        expect(testBook, isNot(reference));
-      });
-
-      test("is false when CoverImage changes", () async {
-        testBook =
-            testBook.copyWith(coverImage: Image(width: 200, height: 200));
         expect(testBook, isNot(reference));
       });
 
@@ -120,12 +113,6 @@ Future<void> main() async {
         expect(testBook.hashCode, isNot(reference.hashCode));
       });
 
-      test("is false when CoverImage changes", () async {
-        testBook =
-            testBook.copyWith(coverImage: Image(width: 200, height: 200));
-        expect(testBook.hashCode, isNot(reference.hashCode));
-      });
-
       test("is false when Schema changes", () async {
         var schema = EpubSchema(
           contentDirectoryPath: "some/random/path",
@@ -149,7 +136,7 @@ extension on EpubBook {
     List<String?>? authors,
     EpubSchema? schema,
     EpubContent? content,
-    Image? coverImage,
+    EpubByteContentFile? coverFile,
     List<EpubChapter>? chapters,
   }) {
     return EpubBook(
@@ -158,7 +145,7 @@ extension on EpubBook {
       authors: authors ?? this.authors,
       schema: schema ?? this.schema,
       content: content ?? this.content,
-      coverImage: coverImage ?? this.coverImage,
+      coverFile: coverFile ?? this.coverFile,
       chapters: chapters ?? this.chapters,
     );
   }

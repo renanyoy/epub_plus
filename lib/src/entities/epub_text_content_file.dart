@@ -1,13 +1,13 @@
 import 'epub_content_file.dart';
 
 class EpubTextContentFile extends EpubContentFile {
-  final String? content;
+  final String content;
 
   const EpubTextContentFile({
     super.fileName,
     super.contentMimeType,
     super.contentType,
-    this.content,
+    required this.content,
   });
 
   @override

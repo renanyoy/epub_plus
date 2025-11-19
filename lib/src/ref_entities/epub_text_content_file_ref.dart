@@ -1,6 +1,6 @@
-import 'dart:async';
-
+import '../entities/epub_text_content_file.dart';
 import 'epub_content_file_ref.dart';
+import 'dart:convert' as convert;
 
 class EpubTextContentFileRef extends EpubContentFileRef {
   EpubTextContentFileRef({
@@ -9,8 +9,6 @@ class EpubTextContentFileRef extends EpubContentFileRef {
     super.contentMimeType,
     super.contentType,
   });
-
-  Future<String> readContentAsync() => readContentAsText();
 
   @override
   int get hashCode =>
@@ -27,5 +25,26 @@ class EpubTextContentFileRef extends EpubContentFileRef {
         other.fileName == fileName &&
         other.contentMimeType == contentMimeType &&
         other.contentType == contentType;
+  }
+
+  String get asText {
+    try {
+      return convert.utf8.decode(content);
+    } catch (_) {
+      try {
+        return convert.ascii.decode(content);
+      } catch (_) {}
+    }
+    return '';
+  }
+
+  EpubTextContentFile get byteContentFile {
+    final result = EpubTextContentFile(
+      fileName: fileName,
+      contentType: contentType,
+      contentMimeType: contentMimeType,
+      content: asText,
+    );
+    return result;
   }
 }

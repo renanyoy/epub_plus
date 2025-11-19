@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:collection/collection.dart';
 
 import 'epub_text_content_file_ref.dart';
@@ -41,9 +39,7 @@ class EpubChapterRef {
         listEquals(other.subChapters, subChapters);
   }
 
-  Future<String> readHtmlContent() async {
-    return epubTextContentFileRef!.readContentAsText();
-  }
+  String get htmlContent => epubTextContentFileRef!.asText;
 
   @override
   String toString() {

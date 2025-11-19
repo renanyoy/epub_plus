@@ -32,7 +32,7 @@ void main(List<String> args) async {
   List<String?>? authors = epubBook.authors;
 
   // Book's cover image (null if there is no cover)
-  Image? coverImage = epubBook.coverImage;
+  Image? coverImage = epubBook.coverFile?.asImage;
 
   // CHAPTERS
 
@@ -82,7 +82,7 @@ void main(List<String> args) async {
 
   // All CSS content in the book
   cssFiles?.values.forEach((EpubTextContentFile cssFile) {
-    String cssContent = cssFile.content!;
+    String cssContent = cssFile.content;
   });
 
   // OTHER CONTENT

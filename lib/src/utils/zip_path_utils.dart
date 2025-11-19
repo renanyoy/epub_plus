@@ -12,11 +12,15 @@ class ZipPathUtils {
     if (directory == null || directory == '') {
       return fileName;
     } else if (fileName != null) {
-      while (fileName!.startsWith('../')) {
-        fileName = fileName.substring(3);
-        final di = directory!.lastIndexOf('/');
-        if (di < 0) return fileName;
-        directory = directory.substring(0, di);
+      while (fileName!.startsWith('../') || fileName.startsWith('./')) {
+        if (fileName.startsWith('./')) {
+          fileName = fileName.substring(2);
+        } else {
+          fileName = fileName.substring(3);
+          final di = directory!.lastIndexOf('/');
+          if (di < 0) return fileName;
+          directory = directory.substring(0, di);
+        }
       }
       return '$directory/$fileName';
     }

@@ -1,12 +1,10 @@
-import 'dart:async';
-import 'dart:convert' as convert;
+import 'dart:typed_data';
+import 'package:epub_plus/epub_plus.dart';
 
 import 'package:archive/archive.dart';
 import 'package:collection/collection.dart';
 
-import '../entities/epub_content_type.dart';
 import '../utils/zip_path_utils.dart';
-import 'epub_book_ref.dart';
 
 abstract class EpubContentFileRef {
   final EpubBookRef epubBookRef;
@@ -39,7 +37,7 @@ abstract class EpubContentFileRef {
         other.contentMimeType == contentMimeType;
   }
 
-  ArchiveFile getContentFileEntry() {
+  ArchiveFile get file {
     var contentFilePath = ZipPathUtils.combine(
         epubBookRef.schema!.contentDirectoryPath, fileName);
     var contentFileEntry = epubBookRef.epubArchive.files
@@ -51,32 +49,5 @@ abstract class EpubContentFileRef {
     return contentFileEntry;
   }
 
-  List<int> getContentStream() {
-    return openContentStream(getContentFileEntry());
-  }
-
-  List<int> openContentStream(ArchiveFile contentFileEntry) {
-    var contentStream = <int>[];
-    contentStream.addAll(contentFileEntry.content);
-    return contentStream;
-  }
-
-  Future<List<int>> readContentAsBytes() async {
-    var contentFileEntry = getContentFileEntry();
-    var content = openContentStream(contentFileEntry);
-    return content;
-  }
-
-  Future<String> readContentAsText() async {
-    var contentStream = getContentStream();
-    String result = '';
-    try {
-      result = convert.utf8.decode(contentStream);
-    } catch (_) {
-      try {
-        result = convert.ascii.decode(contentStream);
-      } catch (_) {}
-    }
-    return result;
-  }
+  Uint8List get content => file.content;
 }

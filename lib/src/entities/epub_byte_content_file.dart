@@ -1,15 +1,17 @@
+import 'dart:typed_data';
+
 import 'package:collection/collection.dart';
+import 'package:image/image.dart';
 
 import 'epub_content_file.dart';
 
 class EpubByteContentFile extends EpubContentFile {
-  final List<int>? content;
-
+  final Uint8List content;
   const EpubByteContentFile({
     super.fileName,
     super.contentMimeType,
     super.contentType,
-    this.content,
+    required this.content,
   });
 
   @override
@@ -29,4 +31,6 @@ class EpubByteContentFile extends EpubContentFile {
         contentType == other.contentType &&
         listEquals(content, other.content);
   }
+
+  Image? get asImage => decodeImage(content);
 }

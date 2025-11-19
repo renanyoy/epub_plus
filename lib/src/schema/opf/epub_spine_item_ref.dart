@@ -21,9 +21,7 @@ class EpubSpineItemRef {
     return other.idRef == idRef && other.isLinear == isLinear;
   }
 
-  Future<String> readHtmlContent() async {
-    return epubTextContentFileRef!.readContentAsText();
-  }
+  String readHtmlContent() => epubTextContentFileRef!.asText;
 
   @override
   String toString() {

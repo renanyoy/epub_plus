@@ -1,5 +1,7 @@
 library;
 
+import 'dart:typed_data';
+
 import 'package:epub_plus/epub_plus.dart';
 import 'package:test/test.dart';
 
@@ -21,7 +23,7 @@ Future<void> main() async {
     );
 
     byteContentFile = EpubByteContentFile(
-      content: [0, 1, 2, 3],
+      content: Uint8List.fromList([0, 1, 2, 3]),
       contentMimeType: "application/orthros",
       contentType: EpubContentType.other,
       fileName: "orthros.bin",
