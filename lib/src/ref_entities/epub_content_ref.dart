@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 
+import '../entities/epub_content.dart';
+import '../entities/epub_content_file.dart';
 import 'epub_byte_content_file_ref.dart';
 import 'epub_content_file_ref.dart';
 import 'epub_text_content_file_ref.dart';
@@ -35,5 +37,31 @@ class EpubContentRef {
         mapEquals(other.images, images) &&
         mapEquals(other.fonts, fonts) &&
         mapEquals(other.allFiles, allFiles);
+  }
+
+  EpubContent get content {
+    final html = this.html.textContentFiles;
+    final css = this.css.textContentFiles;
+    final images = this.images.byteContentFiles;
+    final fonts = this.fonts.byteContentFiles;
+    final allFiles = <String, EpubContentFile>{};
+
+    html.forEach((key, value) => allFiles[key] = value);
+    css.forEach((key, value) => allFiles[key] = value);
+    images.forEach((key, value) => allFiles[key] = value);
+    fonts.forEach((key, value) => allFiles[key] = value);
+
+    for (final e in [
+      ...this.allFiles.entries.where((e) => !allFiles.containsKey(e.key))
+    ]) {
+      allFiles[e.key] = e.value.byteContentFile;
+    }
+    return EpubContent(
+      html: html,
+      css: css,
+      images: images,
+      fonts: fonts,
+      allFiles: allFiles,
+    );
   }
 }

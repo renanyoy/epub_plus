@@ -38,7 +38,7 @@ class EpubTextContentFileRef extends EpubContentFileRef {
     return '';
   }
 
-  EpubTextContentFile get byteContentFile {
+  EpubTextContentFile get textContentFile {
     final result = EpubTextContentFile(
       fileName: fileName,
       contentType: contentType,
@@ -47,4 +47,9 @@ class EpubTextContentFileRef extends EpubContentFileRef {
     );
     return result;
   }
+}
+
+extension TextContentFiles on Map<String, EpubTextContentFileRef> {
+  Map<String, EpubTextContentFile> get textContentFiles =>
+      map((k, v) => MapEntry(k, v.textContentFile));
 }

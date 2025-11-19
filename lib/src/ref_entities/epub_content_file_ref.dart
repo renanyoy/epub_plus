@@ -50,4 +50,16 @@ abstract class EpubContentFileRef {
   }
 
   Uint8List get content => file.content;
+
+  EpubByteContentFile get byteContentFile => EpubByteContentFile(
+        fileName: fileName,
+        contentType: contentType,
+        contentMimeType: contentMimeType,
+        content: content,
+      );
+}
+
+extension ByteContentFiles on Map<String, EpubContentFileRef> {
+  Map<String, EpubByteContentFile> get byteContentFiles =>
+      map((k, v) => MapEntry(k, v.byteContentFile));
 }

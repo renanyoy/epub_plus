@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 
+import '../entities/epub_chapter.dart';
 import 'epub_text_content_file_ref.dart';
 
 class EpubChapterRef {
@@ -45,4 +46,15 @@ class EpubChapterRef {
   String toString() {
     return 'Title: $title, Subchapter count: ${subChapters.length}';
   }
+
+  EpubChapter get chapter => EpubChapter(
+      title: title,
+      contentFileName: contentFileName,
+      anchor: anchor,
+      htmlContent: htmlContent,
+      subChapters: [...subChapters.chapters]);
+}
+
+extension ChaptersRefExt on Iterable<EpubChapterRef> {
+  Iterable<EpubChapter> get chapters => map((cr) => cr.chapter);
 }

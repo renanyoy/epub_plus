@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:epub_plus/epub_plus.dart';
 import 'package:xml/xml.dart';
-
-import 'epub_spine_item_ref.dart';
 
 class EpubSpine {
   final String? tableOfContents;
@@ -62,5 +61,22 @@ class EpubSpine {
       tableOfContents: tableOfContents,
       ltr: ltr,
     );
+  }
+
+  List<EpubChapter> asChapters(EpubContent content) {
+    final result = <EpubChapter>[];
+    for (final itemRef in items) {
+      EpubTextContentFile? itemContent = content.find(itemRef.idRef!);
+      if (itemContent == null) {
+        continue;
+      }
+      final chapter = EpubChapter(
+        contentFileName: itemContent.fileName,
+        htmlContent: itemContent.content,
+      );
+      result.add(chapter);
+      return result;
+    }
+    return result;
   }
 }

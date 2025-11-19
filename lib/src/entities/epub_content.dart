@@ -37,4 +37,12 @@ class EpubContent {
         mapEquals(other.fonts, fonts) &&
         mapEquals(other.allFiles, allFiles);
   }
+
+  T? find<T extends EpubContentFile>(String idRef) {
+    final file = allFiles.entries
+        .where((e) => e.value is T)
+        .firstWhereOrNull((e) => e.key == idRef)
+        ?.value as T;
+    return file;
+  }
 }
