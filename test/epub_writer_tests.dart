@@ -15,14 +15,12 @@ Future<void> main() async {
     throw Exception("Specified epub file not found: $fullPath");
   }
 
-  List<int> bytes = await targetFile.readAsBytes();
+  final bytes = await targetFile.readAsBytes();
 
   test("Book Round Trip", () async {
-    EpubBook book = await EpubReader.readBook(bytes);
-
+    EpubBook book = (await EpubReader.readBook(bytes));
     var written = EpubWriter.writeBook(book);
     var bookRoundTrip = await EpubReader.readBook(Future.value(written));
-
     expect(bookRoundTrip, equals(book));
   });
 }

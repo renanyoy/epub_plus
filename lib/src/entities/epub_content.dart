@@ -38,11 +38,28 @@ class EpubContent {
         mapEquals(other.allFiles, allFiles);
   }
 
+  // 4debug
   T? find<T extends EpubContentFile>(String idRef) {
-    final file = allFiles.entries
+    T? file = allFiles.entries
         .where((e) => e.value is T)
         .firstWhereOrNull((e) => e.key == idRef)
-        ?.value as T;
+        ?.value as T?;
+    file ??= allFiles.entries.whereType()
+        .where((e) => e.value is T)
+        .firstWhereOrNull((e) => e.key.endsWith(idRef))
+        ?.value as T?;
+    file ??= allFiles.entries
+        .where((e) => e.value is T)
+        .firstWhereOrNull((e) => e.key.contains(idRef))
+        ?.value as T?;
     return file;
+  }
+
+  String debugInfo() {
+    final s = StringBuffer();
+    for (final key in allFiles.keys) {
+      s.writeln(key);
+    }
+    return s.toString();
   }
 }

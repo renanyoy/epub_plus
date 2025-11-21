@@ -43,11 +43,9 @@ class EpubSpine {
           if (idRef == null || idRef.isEmpty) {
             throw Exception('Incorrect EPUB spine: item ID ref is missing');
           }
-
           var linearAttribute = spineItemNode.getAttribute('linear');
           final isLinear = linearAttribute == null ||
               (linearAttribute.toLowerCase() == 'no');
-
           final spineItemRef = EpubSpineItemRef(
             idRef: idRef,
             isLinear: isLinear,
@@ -61,22 +59,5 @@ class EpubSpine {
       tableOfContents: tableOfContents,
       ltr: ltr,
     );
-  }
-
-  List<EpubChapter> asChapters(EpubContent content) {
-    final result = <EpubChapter>[];
-    for (final itemRef in items) {
-      EpubTextContentFile? itemContent = content.find(itemRef.idRef!);
-      if (itemContent == null) {
-        continue;
-      }
-      final chapter = EpubChapter(
-        contentFileName: itemContent.fileName,
-        htmlContent: itemContent.content,
-      );
-      result.add(chapter);
-      return result;
-    }
-    return result;
   }
 }

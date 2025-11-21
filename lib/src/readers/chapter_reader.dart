@@ -1,4 +1,5 @@
 import 'package:epub_plus/src/readers/content_reader.dart';
+import 'package:epub_plus/src/epub_state.dart';
 
 import '../ref_entities/epub_book_ref.dart';
 import '../ref_entities/epub_chapter_ref.dart';
@@ -6,22 +7,25 @@ import '../ref_entities/epub_text_content_file_ref.dart';
 import '../schema/navigation/epub_navigation_point.dart';
 
 extension ChapterReaderExt on EpubBookRef {
-  List<EpubChapterRef> get chapters {
+  EpubReturnValue<List<EpubChapterRef>> get chapters {
     if (schema!.navigation == null) {
-      return <EpubChapterRef>[];
+      return EpubReturnValue(
+          value: <EpubChapterRef>[],
+          state: {EpubState.missingChapters},
+          errors: [EpubError(message: 'no navigation schema')]);
     }
     return getChaptersImpl(this, schema!.navigation!.navMap!.points);
   }
 
-  static List<EpubChapterRef> getChaptersImpl(
+  static EpubReturnValue<List<EpubChapterRef>> getChaptersImpl(
       EpubBookRef bookRef, List<EpubNavigationPoint> navigationPoints) {
-    var result = <EpubChapterRef>[];
-    // navigationPoints.forEach((EpubNavigationPoint navigationPoint) {
-    for (var navigationPoint in navigationPoints) {
+    final ret = EpubStateCollection();
+    final result = <EpubChapterRef>[];
+    for (final navigationPoint in navigationPoints) {
       String? contentFileName;
       String? anchor;
       if (navigationPoint.content?.source == null) continue;
-      var contentSourceAnchorCharIndex =
+      final contentSourceAnchorCharIndex =
           navigationPoint.content!.source!.indexOf('#');
       if (contentSourceAnchorCharIndex == -1) {
         contentFileName = navigationPoint.content!.source;
@@ -35,23 +39,26 @@ extension ChapterReaderExt on EpubBookRef {
       contentFileName = Uri.decodeFull(contentFileName!);
       EpubTextContentFileRef? htmlContentFileRef;
       if (!bookRef.content.html.containsKey(contentFileName)) {
-        throw Exception(
-          'Incorrect EPUB manifest: item with href = "$contentFileName" is missing.',
-        );
+        // TODO: try to find file in archive
+        ret.add(
+            state: {EpubState.missingChapters},
+            error: EpubError(
+              message:
+                  'Incorrect EPUB manifest: item with href = "$contentFileName" is missing.',
+            ));
+        continue;
       }
-
       htmlContentFileRef = bookRef.content.html[contentFileName];
-      var chapterRef = EpubChapterRef(
+      final chapterRef = EpubChapterRef(
         epubTextContentFileRef: htmlContentFileRef,
         title: navigationPoint.navigationLabels.first.text,
         contentFileName: contentFileName,
         anchor: anchor,
-        subChapters:
-            getChaptersImpl(bookRef, navigationPoint.childNavigationPoints),
+        subChapters: ret.combine(
+            getChaptersImpl(bookRef, navigationPoint.childNavigationPoints))!,
       );
       result.add(chapterRef);
     }
-
-    return result;
+    return ret.returns(result);
   }
 }

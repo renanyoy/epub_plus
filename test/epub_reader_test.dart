@@ -36,7 +36,7 @@ void main() async {
 
     test("Chapters count", () {
       var t = epubRef.chapters;
-      expect(t.length, equals(2));
+      expect(t.value!.length, equals(2));
     });
 
     test("Author and title", () {

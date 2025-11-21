@@ -55,8 +55,6 @@ extension PackageReaderExt on Archive {
     if (spineNode == null) {
       throw Exception('EPUB parsing error: spine not found in the package.');
     }
-        
-
     final spine = EpubSpine.fromXml(spineNode);
 
     final guideNode = packageNode

@@ -16,9 +16,9 @@ Future<void> main() async {
   if (!(await targetFile.exists())) {
     throw Exception("Specified epub file not found: $fullPath");
   }
-  List<int> bytes = await targetFile.readAsBytes();
+  final bytes = await targetFile.readAsBytes();
   test("Test Epub Image", () async {
-    EpubBook epubRef = await EpubReader.readBook(bytes);
+    EpubBook epubRef = (await EpubReader.readBook(bytes));
 
     expect(epubRef.coverFile!.asImage, isNotNull);
 

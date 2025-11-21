@@ -64,4 +64,12 @@ class EpubContentRef {
       allFiles: allFiles,
     );
   }
+
+  String debugInfo() {
+    final s = StringBuffer();
+    for (final key in allFiles.keys) {
+      s.writeln(key);
+    }
+    return s.toString();
+  }
 }

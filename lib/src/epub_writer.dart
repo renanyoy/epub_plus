@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:archive/archive.dart';
 import 'dart:convert' as convert;
 import 'package:epub_plus/src/utils/zip_path_utils.dart';
@@ -51,9 +53,9 @@ class EpubWriter {
   }
 
   // Serializes the EpubBook into a byte array
-  static List<int>? writeBook(EpubBook book) {
+  static Uint8List? writeBook(EpubBook book) {
     var arch = _createArchive(book);
 
-    return ZipEncoder().encode(arch);
+    return Uint8List.fromList(ZipEncoder().encode(arch));
   }
 }

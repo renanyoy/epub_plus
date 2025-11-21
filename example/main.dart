@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:io' as io;
+import 'dart:typed_data';
 
 import 'package:path/path.dart' as path;
 import 'package:epub_plus/epub_plus.dart';
@@ -15,10 +16,10 @@ void main(List<String> args) async {
     fileName,
   );
   var targetFile = io.File(fullPath);
-  List<int> bytes = await targetFile.readAsBytes();
+  final bytes = await targetFile.readAsBytes();
 
   // Opens a book and reads all of its content into the memory
-  EpubBook epubBook = await EpubReader.readBook(bytes);
+  EpubBook epubBook = (await EpubReader.readBook(bytes));
 
   // COMMON PROPERTIES
 
@@ -118,6 +119,6 @@ void main(List<String> args) async {
 
   if (written != null) {
     // Read the book into a new object!
-    var newBook = await EpubReader.readBook(written);
+    var newBook = await EpubReader.readBook(Uint8List.fromList(written));
   }
 }

@@ -9,16 +9,16 @@ class EpubBook {
   final EpubContent? content;
   final EpubByteContentFile? coverFile;
   final List<EpubChapter> chapters;
-
-  const EpubBook({
-    this.title,
-    this.author,
-    this.authors = const <String>[],
-    this.schema,
-    this.content,
-    this.coverFile,
-    this.chapters = const <EpubChapter>[],
-  });
+  final EpubStateResult state;
+  const EpubBook(
+      {this.title,
+      this.author,
+      this.authors = const <String>[],
+      this.schema,
+      this.content,
+      this.coverFile,
+      this.chapters = const <EpubChapter>[],
+      this.state = const EpubStateResult()});
 
   @override
   int get hashCode {

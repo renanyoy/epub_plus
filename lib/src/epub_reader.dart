@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
@@ -40,8 +41,8 @@ class EpubReader {
   /// about the book, notably the [Title], [Author] and [AuthorList].
   /// Additional information is loaded in the [Schema] property such as the
   /// Epub version, Publishers, Languages and more.
-  static Future<EpubBookRef> openBook(FutureOr<List<int>> bytes) async {
-    List<int> loadedBytes;
+  static Future<EpubBookRef> openBook(FutureOr<Uint8List> bytes) async {
+    Uint8List loadedBytes;
     if (bytes is Future) {
       loadedBytes = await bytes;
     } else {
@@ -56,7 +57,6 @@ class EpubReader {
         .whereType<String>()
         .toList();
     final author = authors.join(', ');
-
     return EpubBookRef(
       epubArchive: epubArchive,
       title: title,
@@ -67,9 +67,9 @@ class EpubReader {
   }
 
   /// Opens the book asynchronously and reads all of its content into the memory. Does not hold the handle to the EPUB file.
-  static Future<EpubBook> readBook(FutureOr<List<int>> bytes) async {
-    List<int> loadedBytes = await bytes;
-    final epubBookRef = await openBook(loadedBytes);
+  static Future<EpubBook> readBook(FutureOr<Uint8List> bytes) async {
+    final ret = EpubStateCollection();
+    final epubBookRef = await openBook(await bytes);
     final schema = epubBookRef.schema;
     final title = epubBookRef.title;
     final authors = epubBookRef.authors;
@@ -78,23 +78,22 @@ class EpubReader {
     EpubByteContentFile? coverFile;
     try {
       coverFile = epubBookRef.coverContent?.byteContentFile;
-    } catch (_) {}
-    List<EpubChapter> chapters = [];
-    try {
-      final chapterRefs = epubBookRef.chapters;
-      chapters = [...chapterRefs.chapters];
-    } catch (_) {}
-    if (chapters.isEmpty && schema?.package?.spine != null) {
-      chapters = schema!.package!.spine!.asChapters(content);
+    } catch (error, stackTrace) {
+      ret.add(
+          state: {EpubState.missingCover},
+          error:
+              EpubError(message: error.toString(), exceptionTrace: stackTrace));
     }
+    final chapterRefs = ret.combine(epubBookRef.chapters)!;
+    final chapters = [...chapterRefs.chapters];
     return EpubBook(
-      title: title,
-      author: author,
-      authors: authors,
-      schema: schema,
-      content: content,
-      coverFile: coverFile,
-      chapters: chapters,
-    );
+        title: title,
+        author: author,
+        authors: authors,
+        schema: schema,
+        content: content,
+        coverFile: coverFile,
+        chapters: chapters,
+        state: ret.result);
   }
 }

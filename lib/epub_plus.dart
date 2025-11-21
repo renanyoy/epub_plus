@@ -2,6 +2,7 @@ library;
 
 export 'src/utils/enum_from_string.dart';
 
+export 'src/epub_state.dart';
 export 'src/epub_reader.dart';
 export 'src/epub_writer.dart';
 export 'src/ref_entities/epub_book_ref.dart';
