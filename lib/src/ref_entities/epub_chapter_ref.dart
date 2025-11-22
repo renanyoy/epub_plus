@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart';
 
 import '../entities/epub_chapter.dart';
-import 'epub_text_content_file_ref.dart';
+import 'content/epub_text_content_item_ref.dart';
 
 class EpubChapterRef {
-  final EpubTextContentFileRef? epubTextContentFileRef;
+  final EpubTextContentItemRef? epubTextContentFileRef;
   final String? title;
   final String? anchor;
   final List<EpubChapterRef> subChapters;

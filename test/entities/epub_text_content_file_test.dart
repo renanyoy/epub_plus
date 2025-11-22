@@ -4,14 +4,14 @@ import 'package:epub_plus/epub_plus.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
-  var reference = EpubTextContentFile(
+  var reference = EpubTextContentItem(
     content: "Hello",
     contentMimeType: "application/test",
     contentType: EpubContentType.other,
     fileName: "orthrosFile",
   );
 
-  late EpubTextContentFile testFile;
+  late EpubTextContentItem testFile;
 
   setUp(() async {
     testFile = reference.copyWith();
@@ -71,14 +71,14 @@ Future<void> main() async {
   });
 }
 
-extension on EpubTextContentFile {
-  EpubTextContentFile copyWith({
+extension on EpubTextContentItem {
+  EpubTextContentItem copyWith({
     String? content,
     String? contentMimeType,
     EpubContentType? contentType,
     String? fileName,
   }) {
-    return EpubTextContentFile(
+    return EpubTextContentItem(
       content: content ?? this.content,
       contentMimeType: contentMimeType ?? this.contentMimeType,
       contentType: contentType ?? this.contentType,

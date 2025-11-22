@@ -9,20 +9,20 @@ Future<void> main() async {
   var reference = EpubContent();
 
   late EpubContent testContent;
-  late EpubTextContentFile textContentFile;
-  late EpubByteContentFile byteContentFile;
+  late EpubTextContentItem textContentFile;
+  late EpubByteContentItem byteContentFile;
 
   setUp(() async {
     testContent = EpubContent();
 
-    textContentFile = EpubTextContentFile(
+    textContentFile = EpubTextContentItem(
       content: "Some string",
       contentMimeType: "application/text",
       contentType: EpubContentType.other,
       fileName: "orthros.txt",
     );
 
-    byteContentFile = EpubByteContentFile(
+    byteContentFile = EpubByteContentItem(
       content: Uint8List.fromList([0, 1, 2, 3]),
       contentMimeType: "application/orthros",
       contentType: EpubContentType.other,
@@ -101,11 +101,11 @@ Future<void> main() async {
 
 extension on EpubContent {
   EpubContent copyWith({
-    Map<String, EpubTextContentFile>? html,
-    Map<String, EpubTextContentFile>? css,
-    Map<String, EpubByteContentFile>? images,
-    Map<String, EpubByteContentFile>? fonts,
-    Map<String, EpubContentFile>? allFiles,
+    Map<String, EpubTextContentItem>? html,
+    Map<String, EpubTextContentItem>? css,
+    Map<String, EpubByteContentItem>? images,
+    Map<String, EpubByteContentItem>? fonts,
+    Map<String, EpubContentItem>? allFiles,
   }) {
     return EpubContent(
       html: html ?? this.html,

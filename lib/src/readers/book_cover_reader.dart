@@ -2,7 +2,7 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:epub_plus/epub_plus.dart';
 import 'package:epub_plus/src/readers/content_reader.dart';
 
-import '../ref_entities/epub_byte_content_file_ref.dart';
+import '../ref_entities/content/epub_byte_content_item_ref.dart';
 
 extension BookCoverReaderExt on EpubBookRef {
   EpubByteContentFileRef? get coverContent {

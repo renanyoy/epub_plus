@@ -2,34 +2,34 @@ library;
 
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
-import 'package:epub_plus/src/ref_entities/epub_byte_content_file_ref.dart';
-import 'package:epub_plus/src/ref_entities/epub_content_file_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_byte_content_item_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_content_item_ref.dart';
 import 'package:epub_plus/src/ref_entities/epub_content_ref.dart';
-import 'package:epub_plus/src/ref_entities/epub_text_content_file_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_text_content_item_ref.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
   var reference = EpubContentRef();
 
   late EpubContentRef testContent;
-  late EpubTextContentFileRef textContentFile;
+  late EpubTextContentItemRef textContentFile;
   late EpubByteContentFileRef byteContentFile;
 
   setUp(() async {
     var arch = Archive();
-    var refBook = EpubBookRef(epubArchive: arch);
+    var refBook = EpubBookRef(archive: arch);
 
     testContent = EpubContentRef();
 
-    textContentFile = EpubTextContentFileRef(
-      epubBookRef: refBook,
+    textContentFile = EpubTextContentItemRef(
+      bookRef: refBook,
       contentMimeType: "application/text",
       contentType: EpubContentType.other,
       fileName: "orthros.txt",
     );
 
     byteContentFile = EpubByteContentFileRef(
-      epubBookRef: refBook,
+      bookRef: refBook,
       contentMimeType: "application/orthros",
       contentType: EpubContentType.other,
       fileName: "orthros.bin",
@@ -107,11 +107,11 @@ Future<void> main() async {
 
 extension on EpubContentRef {
   EpubContentRef copyWith({
-    Map<String, EpubTextContentFileRef>? html,
-    Map<String, EpubTextContentFileRef>? css,
+    Map<String, EpubTextContentItemRef>? html,
+    Map<String, EpubTextContentItemRef>? css,
     Map<String, EpubByteContentFileRef>? images,
     Map<String, EpubByteContentFileRef>? fonts,
-    Map<String, EpubContentFileRef>? allFiles,
+    Map<String, EpubContentItemRef>? allFiles,
   }) {
     return EpubContentRef(
       html: html ?? this.html,

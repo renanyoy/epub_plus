@@ -48,8 +48,8 @@ class EpubReader {
     } else {
       loadedBytes = bytes;
     }
-    final epubArchive = ZipDecoder().decodeBytes(loadedBytes);
-    final schema = await epubArchive.epubSchema;
+    final archive = ZipDecoder().decodeBytes(loadedBytes);
+    final schema = await archive.epubSchema;
     final title = schema.package!.metadata!.titles
         .firstWhere((String name) => true, orElse: () => '');
     final authors = schema.package!.metadata!.creators
@@ -58,7 +58,7 @@ class EpubReader {
         .toList();
     final author = authors.join(', ');
     return EpubBookRef(
-      epubArchive: epubArchive,
+      archive: archive,
       title: title,
       author: author,
       authors: authors,
@@ -75,9 +75,9 @@ class EpubReader {
     final authors = epubBookRef.authors;
     final author = epubBookRef.author;
     final content = epubBookRef.content.content;
-    EpubByteContentFile? coverFile;
+    EpubByteContentItem? cover;
     try {
-      coverFile = epubBookRef.coverContent?.byteContentFile;
+      cover = epubBookRef.coverContent?.byteContentFile;
     } catch (error, stackTrace) {
       ret.add(
           state: {EpubState.missingCover},
@@ -92,7 +92,7 @@ class EpubReader {
         authors: authors,
         schema: schema,
         content: content,
-        coverFile: coverFile,
+        cover: cover,
         chapters: chapters,
         state: ret.result);
   }

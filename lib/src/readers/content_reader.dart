@@ -1,17 +1,18 @@
-import '../entities/epub_content_type.dart';
+import '../entities/content/epub_content_type.dart';
 import '../ref_entities/epub_book_ref.dart';
-import '../ref_entities/epub_byte_content_file_ref.dart';
-import '../ref_entities/epub_content_file_ref.dart';
+import '../ref_entities/content/epub_byte_content_item_ref.dart';
+import '../ref_entities/content/epub_content_item_ref.dart';
 import '../ref_entities/epub_content_ref.dart';
-import '../ref_entities/epub_text_content_file_ref.dart';
+import '../ref_entities/content/epub_text_content_item_ref.dart';
+import '../utils/uri_decode.dart';
 
 extension ContentReaderExt on EpubBookRef {
   EpubContentRef get content {
-    final html = <String, EpubTextContentFileRef>{};
-    final css = <String, EpubTextContentFileRef>{};
+    final html = <String, EpubTextContentItemRef>{};
+    final css = <String, EpubTextContentItemRef>{};
     final images = <String, EpubByteContentFileRef>{};
     final fonts = <String, EpubByteContentFileRef>{};
-    final allFiles = <String, EpubContentFileRef>{};
+    final allFiles = <String, EpubContentItemRef>{};
 
     for (final manifestItem in schema!.package!.manifest!.items) {
       var fileName = manifestItem.href ?? '';
@@ -25,9 +26,9 @@ extension ContentReaderExt on EpubBookRef {
         case EpubContentType.xml:
         case EpubContentType.dtbook:
         case EpubContentType.dtbookNCX:
-          var epubTextContentFile = EpubTextContentFileRef(
-            epubBookRef: this,
-            fileName: Uri.decodeFull(fileName),
+          var epubTextContentFile = EpubTextContentItemRef(
+            bookRef: this,
+            fileName: decodeUri(fileName),
             contentMimeType: contentMimeType,
           );
 
@@ -42,8 +43,8 @@ extension ContentReaderExt on EpubBookRef {
           allFiles[fileName] = epubTextContentFile;
         default:
           var epubByteContentFile = EpubByteContentFileRef(
-            epubBookRef: this,
-            fileName: Uri.decodeFull(fileName),
+            bookRef: this,
+            fileName: decodeUri(fileName),
             contentMimeType: contentMimeType,
             contentType: contentType,
           );

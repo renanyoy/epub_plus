@@ -1,6 +1,7 @@
 import 'package:epub_plus/epub_plus.dart';
 import 'package:epub_plus/src/readers/content_reader.dart';
-import '../ref_entities/epub_text_content_file_ref.dart';
+import '../ref_entities/content/epub_text_content_item_ref.dart';
+import '../utils/uri_decode.dart';
 
 extension ChapterReaderExt on EpubBookRef {
   EpubReturnValue<List<EpubChapterRef>> get chapters {
@@ -25,8 +26,8 @@ extension ChapterReaderExt on EpubBookRef {
       final type = EpubContentType.fromMimeType(i.mediaType!);
       if (type != EpubContentType.xhtml11) continue;
       final chapterRef = EpubChapterRef(
-        epubTextContentFileRef: EpubTextContentFileRef(
-            epubBookRef: this,
+        epubTextContentFileRef: EpubTextContentItemRef(
+            bookRef: this,
             fileName: i.href,
             contentType: type,
             contentMimeType: i.mediaType),
@@ -59,8 +60,8 @@ extension ChapterReaderExt on EpubBookRef {
         anchor = navigationPoint.content!.source!
             .substring(contentSourceAnchorCharIndex + 1);
       }
-      contentFileName = Uri.decodeFull(contentFileName!);
-      EpubTextContentFileRef? htmlContentFileRef;
+      contentFileName = decodeUri(contentFileName!);
+      EpubTextContentItemRef? htmlContentFileRef;
       if (!content.html.containsKey(contentFileName)) {
         // TODO: try to find file in archive
         ret.add(

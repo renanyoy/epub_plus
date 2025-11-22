@@ -1,24 +1,24 @@
 import 'package:collection/collection.dart';
 
 import '../entities/epub_content.dart';
-import '../entities/epub_content_file.dart';
-import 'epub_byte_content_file_ref.dart';
-import 'epub_content_file_ref.dart';
-import 'epub_text_content_file_ref.dart';
+import '../entities/content/epub_content_item.dart';
+import 'content/epub_byte_content_item_ref.dart';
+import 'content/epub_content_item_ref.dart';
+import 'content/epub_text_content_item_ref.dart';
 
 class EpubContentRef {
-  final Map<String, EpubTextContentFileRef> html;
-  final Map<String, EpubTextContentFileRef> css;
+  final Map<String, EpubTextContentItemRef> html;
+  final Map<String, EpubTextContentItemRef> css;
   final Map<String, EpubByteContentFileRef> images;
   final Map<String, EpubByteContentFileRef> fonts;
-  final Map<String, EpubContentFileRef> allFiles;
+  final Map<String, EpubContentItemRef> allFiles;
 
   const EpubContentRef({
-    this.html = const <String, EpubTextContentFileRef>{},
-    this.css = const <String, EpubTextContentFileRef>{},
+    this.html = const <String, EpubTextContentItemRef>{},
+    this.css = const <String, EpubTextContentItemRef>{},
     this.images = const <String, EpubByteContentFileRef>{},
     this.fonts = const <String, EpubByteContentFileRef>{},
-    this.allFiles = const <String, EpubContentFileRef>{},
+    this.allFiles = const <String, EpubContentItemRef>{},
   });
 
   @override
@@ -44,7 +44,7 @@ class EpubContentRef {
     final css = this.css.textContentFiles;
     final images = this.images.byteContentFiles;
     final fonts = this.fonts.byteContentFiles;
-    final allFiles = <String, EpubContentFile>{};
+    final allFiles = <String, EpubContentItem>{};
 
     html.forEach((key, value) => allFiles[key] = value);
     css.forEach((key, value) => allFiles[key] = value);

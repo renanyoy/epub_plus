@@ -1,9 +1,9 @@
-import 'epub_content_file.dart';
+import 'epub_content_item.dart';
 
-class EpubTextContentFile extends EpubContentFile {
+class EpubTextContentItem extends EpubContentItem {
   final String content;
 
-  const EpubTextContentFile({
+  const EpubTextContentItem({
     super.fileName,
     super.contentMimeType,
     super.contentType,
@@ -18,7 +18,7 @@ class EpubTextContentFile extends EpubContentFile {
       content.hashCode;
 
   @override
-  bool operator ==(covariant EpubTextContentFile other) {
+  bool operator ==(covariant EpubTextContentItem other) {
     if (identical(this, other)) return true;
 
     return other.fileName == fileName &&

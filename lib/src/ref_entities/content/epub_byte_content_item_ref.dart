@@ -1,10 +1,10 @@
 import 'package:image/image.dart';
 
-import 'epub_content_file_ref.dart';
+import 'epub_content_item_ref.dart';
 
-class EpubByteContentFileRef extends EpubContentFileRef {
+class EpubByteContentFileRef extends EpubContentItemRef {
   EpubByteContentFileRef({
-    required super.epubBookRef,
+    required super.bookRef,
     super.fileName,
     super.contentMimeType,
     super.contentType,

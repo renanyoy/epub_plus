@@ -6,8 +6,8 @@ import 'package:epub_plus/src/utils/zip_path_utils.dart';
 import 'package:epub_plus/src/writers/epub_package_writer.dart';
 
 import 'entities/epub_book.dart';
-import 'entities/epub_byte_content_file.dart';
-import 'entities/epub_text_content_file.dart';
+import 'entities/content/epub_byte_content_item.dart';
+import 'entities/content/epub_text_content_item.dart';
 
 class EpubWriter {
   static const _containerFile =
@@ -29,9 +29,9 @@ class EpubWriter {
     book.content!.allFiles.forEach((name, file) {
       List<int>? content;
 
-      if (file is EpubByteContentFile) {
+      if (file is EpubByteContentItem) {
         content = file.content;
-      } else if (file is EpubTextContentFile) {
+      } else if (file is EpubTextContentItem) {
         content = convert.utf8.encode(file.content);
       }
 

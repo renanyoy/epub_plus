@@ -1,11 +1,11 @@
 import 'epub_content_type.dart';
 
-abstract class EpubContentFile {
+abstract class EpubContentItem {
   final String? fileName;
   final EpubContentType? contentType;
   final String? contentMimeType;
 
-  const EpubContentFile({
+  const EpubContentItem({
     this.fileName,
     this.contentType,
     this.contentMimeType,
@@ -16,7 +16,7 @@ abstract class EpubContentFile {
       fileName.hashCode ^ contentType.hashCode ^ contentMimeType.hashCode;
 
   @override
-  bool operator ==(covariant EpubContentFile other) {
+  bool operator ==(covariant EpubContentItem other) {
     if (identical(this, other)) return true;
 
     return other.fileName == fileName &&

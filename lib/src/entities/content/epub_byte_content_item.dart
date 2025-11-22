@@ -3,11 +3,11 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:image/image.dart';
 
-import 'epub_content_file.dart';
+import 'epub_content_item.dart';
 
-class EpubByteContentFile extends EpubContentFile {
+class EpubByteContentItem extends EpubContentItem {
   final Uint8List content;
-  const EpubByteContentFile({
+  const EpubByteContentItem({
     super.fileName,
     super.contentMimeType,
     super.contentType,
@@ -22,7 +22,7 @@ class EpubByteContentFile extends EpubContentFile {
       const DeepCollectionEquality().hash(content);
 
   @override
-  bool operator ==(covariant EpubByteContentFile other) {
+  bool operator ==(covariant EpubByteContentItem other) {
     if (identical(this, other)) return true;
     final listEquals = const DeepCollectionEquality().equals;
 

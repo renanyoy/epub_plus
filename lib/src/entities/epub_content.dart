@@ -1,22 +1,22 @@
 import 'package:collection/collection.dart';
 
-import 'epub_byte_content_file.dart';
-import 'epub_content_file.dart';
-import 'epub_text_content_file.dart';
+import 'content/epub_byte_content_item.dart';
+import 'content/epub_content_item.dart';
+import 'content/epub_text_content_item.dart';
 
 class EpubContent {
-  final Map<String, EpubTextContentFile> html;
-  final Map<String, EpubTextContentFile> css;
-  final Map<String, EpubByteContentFile> images;
-  final Map<String, EpubByteContentFile> fonts;
-  final Map<String, EpubContentFile> allFiles;
+  final Map<String, EpubTextContentItem> html;
+  final Map<String, EpubTextContentItem> css;
+  final Map<String, EpubByteContentItem> images;
+  final Map<String, EpubByteContentItem> fonts;
+  final Map<String, EpubContentItem> allFiles;
 
   const EpubContent({
-    this.html = const <String, EpubTextContentFile>{},
-    this.css = const <String, EpubTextContentFile>{},
-    this.images = const <String, EpubByteContentFile>{},
-    this.fonts = const <String, EpubByteContentFile>{},
-    this.allFiles = const <String, EpubContentFile>{},
+    this.html = const <String, EpubTextContentItem>{},
+    this.css = const <String, EpubTextContentItem>{},
+    this.images = const <String, EpubByteContentItem>{},
+    this.fonts = const <String, EpubByteContentItem>{},
+    this.allFiles = const <String, EpubContentItem>{},
   });
 
   @override
@@ -37,7 +37,7 @@ class EpubContent {
         mapEquals(other.allFiles, allFiles);
   }
 
-  T? find<T extends EpubContentFile>({required String href}) {
+  T? find<T extends EpubContentItem>({required String href}) {
     T? file = allFiles.entries
         .where((e) => e.value is T)
         .firstWhereOrNull((e) => e.key == href)

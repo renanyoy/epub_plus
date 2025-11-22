@@ -33,7 +33,7 @@ void main(List<String> args) async {
   List<String?>? authors = epubBook.authors;
 
   // Book's cover image (null if there is no cover)
-  Image? coverImage = epubBook.coverFile?.asImage;
+  Image? coverImage = epubBook.cover?.asImage;
 
   // CHAPTERS
 
@@ -57,9 +57,9 @@ void main(List<String> args) async {
   // IMAGES
 
   // All images in the book (file name is the key)
-  Map<String, EpubByteContentFile>? images = bookContent?.images;
+  Map<String, EpubByteContentItem>? images = bookContent?.images;
 
-  EpubByteContentFile? firstImage =
+  EpubByteContentItem? firstImage =
       images?.values.firstOrNull; // Get the first image in the book
 
   // Content type (e.g. EpubContentType.IMAGE_JPEG, EpubContentType.IMAGE_PNG)
@@ -71,28 +71,28 @@ void main(List<String> args) async {
   // HTML & CSS
 
   // All XHTML files in the book (file name is the key)
-  Map<String, EpubTextContentFile>? htmlFiles = bookContent?.html;
+  Map<String, EpubTextContentItem>? htmlFiles = bookContent?.html;
 
   // All CSS files in the book (file name is the key)
-  Map<String, EpubTextContentFile>? cssFiles = bookContent?.css;
+  Map<String, EpubTextContentItem>? cssFiles = bookContent?.css;
 
   // Entire HTML content of the book
-  htmlFiles?.values.forEach((EpubTextContentFile htmlFile) {
+  htmlFiles?.values.forEach((EpubTextContentItem htmlFile) {
     String? htmlContent = htmlFile.content;
   });
 
   // All CSS content in the book
-  cssFiles?.values.forEach((EpubTextContentFile cssFile) {
+  cssFiles?.values.forEach((EpubTextContentItem cssFile) {
     String cssContent = cssFile.content;
   });
 
   // OTHER CONTENT
 
   // All fonts in the book (file name is the key)
-  Map<String, EpubByteContentFile>? fonts = bookContent?.fonts;
+  Map<String, EpubByteContentItem>? fonts = bookContent?.fonts;
 
   // All files in the book (including HTML, CSS, images, fonts, and other types of files)
-  Map<String, EpubContentFile>? allFiles = bookContent?.allFiles;
+  Map<String, EpubContentItem>? allFiles = bookContent?.allFiles;
 
   // ACCESSING RAW SCHEMA INFORMATION
 

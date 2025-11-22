@@ -4,16 +4,16 @@ import 'package:epub_plus/epub_plus.dart';
 import 'package:archive/archive.dart';
 import 'package:collection/collection.dart';
 
-import '../utils/zip_path_utils.dart';
+import '../../utils/zip_path_utils.dart';
 
-abstract class EpubContentFileRef {
-  final EpubBookRef epubBookRef;
+abstract class EpubContentItemRef {
+  final EpubBookRef bookRef;
   final String? fileName;
   final EpubContentType? contentType;
   final String? contentMimeType;
 
-  const EpubContentFileRef({
-    required this.epubBookRef,
+  const EpubContentItemRef({
+    required this.bookRef,
     this.fileName,
     this.contentType,
     this.contentMimeType,
@@ -21,17 +21,17 @@ abstract class EpubContentFileRef {
 
   @override
   int get hashCode {
-    return epubBookRef.hashCode ^
+    return bookRef.hashCode ^
         fileName.hashCode ^
         contentType.hashCode ^
         contentMimeType.hashCode;
   }
 
   @override
-  bool operator ==(covariant EpubContentFileRef other) {
+  bool operator ==(covariant EpubContentItemRef other) {
     if (identical(this, other)) return true;
 
-    return other.epubBookRef == epubBookRef &&
+    return other.bookRef == bookRef &&
         other.fileName == fileName &&
         other.contentType == contentType &&
         other.contentMimeType == contentMimeType;
@@ -39,8 +39,8 @@ abstract class EpubContentFileRef {
 
   ArchiveFile get file {
     var contentFilePath = ZipPathUtils.combine(
-        epubBookRef.schema!.contentDirectoryPath, fileName);
-    var contentFileEntry = epubBookRef.epubArchive.files
+        bookRef.schema!.contentDirectoryPath, fileName);
+    var contentFileEntry = bookRef.archive.files
         .firstWhereOrNull((ArchiveFile x) => x.name == contentFilePath);
     if (contentFileEntry == null) {
       throw Exception(
@@ -51,7 +51,7 @@ abstract class EpubContentFileRef {
 
   Uint8List get content => file.content;
 
-  EpubByteContentFile get byteContentFile => EpubByteContentFile(
+  EpubByteContentItem get byteContentFile => EpubByteContentItem(
         fileName: fileName,
         contentType: contentType,
         contentMimeType: contentMimeType,
@@ -59,7 +59,7 @@ abstract class EpubContentFileRef {
       );
 }
 
-extension ByteContentFiles on Map<String, EpubContentFileRef> {
-  Map<String, EpubByteContentFile> get byteContentFiles =>
+extension ByteContentFiles on Map<String, EpubContentItemRef> {
+  Map<String, EpubByteContentItem> get byteContentFiles =>
       map((k, v) => MapEntry(k, v.byteContentFile));
 }

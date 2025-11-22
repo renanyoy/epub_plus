@@ -3,13 +3,13 @@ library;
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
 import 'package:epub_plus/src/ref_entities/epub_content_ref.dart';
-import 'package:epub_plus/src/ref_entities/epub_text_content_file_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_text_content_item_ref.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
   Archive arch = Archive();
   var reference = EpubBookRef(
-    epubArchive: arch,
+    archive: arch,
     author: "orthros",
     authors: ["orthros"],
     schema: EpubSchema(),
@@ -29,8 +29,8 @@ Future<void> main() async {
       });
 
       test("is false when Content changes", () async {
-        var file = EpubTextContentFileRef(
-          epubBookRef: testBookRef,
+        var file = EpubTextContentItemRef(
+          bookRef: testBookRef,
           contentMimeType: "application/txt",
           contentType: EpubContentType.other,
           fileName: "orthros.txt",
@@ -75,8 +75,8 @@ Future<void> main() async {
       });
 
       test("is false when Content changes", () async {
-        var file = EpubTextContentFileRef(
-          epubBookRef: testBookRef,
+        var file = EpubTextContentItemRef(
+          bookRef: testBookRef,
           contentMimeType: "application/txt",
           contentType: EpubContentType.other,
           fileName: "orthros.txt",
@@ -118,7 +118,7 @@ Future<void> main() async {
 
 extension on EpubBookRef {
   EpubBookRef copyWith({
-    Archive? epubArchive,
+    Archive? archive,
     String? title,
     List<String>? authors,
     String? author,
@@ -126,7 +126,7 @@ extension on EpubBookRef {
     EpubContentRef? content,
   }) {
     return EpubBookRef(
-      epubArchive: epubArchive ?? this.epubArchive,
+      archive: archive ?? this.archive,
       title: title ?? this.title,
       authors: authors ?? this.authors,
       author: author ?? this.author,

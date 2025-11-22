@@ -2,13 +2,13 @@ library;
 
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
-import 'package:epub_plus/src/ref_entities/epub_text_content_file_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_text_content_item_ref.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
   var arch = Archive();
-  var bookRef = EpubBookRef(epubArchive: arch);
-  var contentFileRef = EpubTextContentFileRef(epubBookRef: bookRef);
+  var bookRef = EpubBookRef(archive: arch);
+  var contentFileRef = EpubTextContentItemRef(bookRef: bookRef);
   var reference = EpubChapterRef(
     epubTextContentFileRef: contentFileRef,
     anchor: "anchor",
@@ -21,8 +21,8 @@ Future<void> main() async {
 
   setUp(() async {
     var arch2 = Archive();
-    bookRef2 = EpubBookRef(epubArchive: arch2);
-    var contentFileRef2 = EpubTextContentFileRef(epubBookRef: bookRef2);
+    bookRef2 = EpubBookRef(archive: arch2);
+    var contentFileRef2 = EpubTextContentItemRef(bookRef: bookRef2);
 
     testChapterRef =
         reference.copyWith(epubTextContentFileRef: contentFileRef2);
@@ -46,7 +46,7 @@ Future<void> main() async {
 
       test("is false when SubChapters changes", () async {
         var subchapterContentFileRef =
-            EpubTextContentFileRef(epubBookRef: bookRef2);
+            EpubTextContentItemRef(bookRef: bookRef2);
         var chapter = EpubChapterRef(
           epubTextContentFileRef: subchapterContentFileRef,
           title: "A Brave new Epub",
@@ -83,7 +83,7 @@ Future<void> main() async {
 
       test("is false when SubChapters changes", () async {
         var subchapterContentFileRef =
-            EpubTextContentFileRef(epubBookRef: bookRef2);
+            EpubTextContentItemRef(bookRef: bookRef2);
         var chapter = EpubChapterRef(
           epubTextContentFileRef: subchapterContentFileRef,
           title: "A Brave new Epub",
@@ -102,7 +102,7 @@ Future<void> main() async {
 
 extension on EpubChapterRef {
   EpubChapterRef copyWith({
-    EpubTextContentFileRef? epubTextContentFileRef,
+    EpubTextContentItemRef? epubTextContentFileRef,
     String? anchor,
     String? contentFileName,
     List<EpubChapterRef>? subChapters,

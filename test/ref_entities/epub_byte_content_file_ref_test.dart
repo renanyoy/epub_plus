@@ -2,15 +2,15 @@ library;
 
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
-import 'package:epub_plus/src/ref_entities/epub_byte_content_file_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_byte_content_item_ref.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
   Archive arch = Archive();
-  EpubBookRef ref = EpubBookRef(epubArchive: arch);
+  EpubBookRef ref = EpubBookRef(archive: arch);
 
   var reference = EpubByteContentFileRef(
-    epubBookRef: ref,
+    bookRef: ref,
     contentMimeType: "application/test",
     contentType: EpubContentType.other,
     fileName: "orthrosFile",
@@ -20,9 +20,9 @@ Future<void> main() async {
 
   setUp(() async {
     Archive arch2 = Archive();
-    EpubBookRef ref2 = EpubBookRef(epubArchive: arch2);
+    EpubBookRef ref2 = EpubBookRef(archive: arch2);
 
-    testFileRef = reference.copyWith(epubBookRef: ref2);
+    testFileRef = reference.copyWith(bookRef: ref2);
   });
 
   group("EpubByteContentFileRef", () {
@@ -74,13 +74,13 @@ Future<void> main() async {
 
 extension on EpubByteContentFileRef {
   EpubByteContentFileRef copyWith({
-    EpubBookRef? epubBookRef,
+    EpubBookRef? bookRef,
     String? contentMimeType,
     EpubContentType? contentType,
     String? fileName,
   }) {
     return EpubByteContentFileRef(
-      epubBookRef: epubBookRef ?? this.epubBookRef,
+      bookRef: bookRef ?? this.bookRef,
       contentMimeType: contentMimeType ?? this.contentMimeType,
       contentType: contentType ?? this.contentType,
       fileName: fileName ?? this.fileName,

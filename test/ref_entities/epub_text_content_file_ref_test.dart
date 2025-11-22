@@ -2,27 +2,27 @@ library;
 
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
-import 'package:epub_plus/src/ref_entities/epub_text_content_file_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub_text_content_item_ref.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
   var arch = Archive();
-  var epubRef = EpubBookRef(epubArchive: arch);
+  var epubRef = EpubBookRef(archive: arch);
 
-  var reference = EpubTextContentFileRef(
-    epubBookRef: epubRef,
+  var reference = EpubTextContentItemRef(
+    bookRef: epubRef,
     contentMimeType: "application/test",
     contentType: EpubContentType.other,
     fileName: "orthrosFile",
   );
 
-  late EpubTextContentFileRef testFile;
+  late EpubTextContentItemRef testFile;
 
   setUp(() async {
     var arch2 = Archive();
-    var epubRef2 = EpubBookRef(epubArchive: arch2);
+    var epubRef2 = EpubBookRef(archive: arch2);
 
-    testFile = reference.copyWith(epubBookRef: epubRef2);
+    testFile = reference.copyWith(bookRef: epubRef2);
   });
 
   group("EpubTextContentFile", () {
@@ -69,18 +69,3 @@ Future<void> main() async {
   });
 }
 
-extension on EpubTextContentFileRef {
-  EpubTextContentFileRef copyWith({
-    EpubBookRef? epubBookRef,
-    String? contentMimeType,
-    EpubContentType? contentType,
-    String? fileName,
-  }) {
-    return EpubTextContentFileRef(
-      epubBookRef: epubBookRef ?? this.epubBookRef,
-      contentMimeType: contentMimeType ?? this.contentMimeType,
-      contentType: contentType ?? this.contentType,
-      fileName: fileName ?? this.fileName,
-    );
-  }
-}

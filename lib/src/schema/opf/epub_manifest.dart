@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:xml/xml.dart';
 
+import '../../utils/uri_decode.dart';
 import 'epub_manifest_item.dart';
 
 class EpubManifest {
@@ -42,7 +43,11 @@ class EpubManifest {
             case 'id':
               id = attributeValue;
             case 'href':
-              href = Uri.decodeComponent(attributeValue);
+              try {
+                href = decodeUri(attributeValue);
+              } catch (_) {
+                href = attributeValue;
+              }
             case 'media-type':
               mediaType = attributeValue;
             case 'media-overlay':

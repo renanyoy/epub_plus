@@ -4,14 +4,14 @@ import 'package:collection/collection.dart';
 import '../entities/epub_schema.dart';
 
 class EpubBookRef {
-  final Archive epubArchive;
+  final Archive archive;
   final String? title;
   final String? author;
   final List<String> authors;
   final EpubSchema? schema;
 
   const EpubBookRef({
-    required this.epubArchive,
+    required this.archive,
     this.title,
     this.author,
     this.authors = const [],

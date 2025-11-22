@@ -25,7 +25,7 @@ Future<void> main() async {
       });
 
       test("is false when Content changes", () async {
-        var file = EpubTextContentFile(
+        var file = EpubTextContentItem(
           content: "Hello",
           contentMimeType: "application/txt",
           contentType: EpubContentType.other,
@@ -79,7 +79,7 @@ Future<void> main() async {
       });
 
       test("is false when Content changes", () async {
-        var file = EpubTextContentFile(
+        var file = EpubTextContentItem(
           content: "Hello",
           contentMimeType: "application/txt",
           contentType: EpubContentType.other,
@@ -129,24 +129,3 @@ Future<void> main() async {
   });
 }
 
-extension on EpubBook {
-  EpubBook copyWith({
-    String? title,
-    String? author,
-    List<String?>? authors,
-    EpubSchema? schema,
-    EpubContent? content,
-    EpubByteContentFile? coverFile,
-    List<EpubChapter>? chapters,
-  }) {
-    return EpubBook(
-      title: title ?? this.title,
-      author: author ?? this.author,
-      authors: authors ?? this.authors,
-      schema: schema ?? this.schema,
-      content: content ?? this.content,
-      coverFile: coverFile ?? this.coverFile,
-      chapters: chapters ?? this.chapters,
-    );
-  }
-}
