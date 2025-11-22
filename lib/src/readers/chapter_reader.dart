@@ -21,18 +21,16 @@ extension ChapterReaderExt on EpubBookRef {
     final manifest = schema!.package!.manifest!;
     for (final s in schema!.package!.spine!.items) {
       final i = manifest.find(id: s.idRef);
-      if (i == null) {
-        continue;
-      }
+      if (i == null) continue;
       final type = EpubContentType.fromMimeType(i.mediaType!);
       if (type != EpubContentType.xhtml11) continue;
       final chapterRef = EpubChapterRef(
-          epubTextContentFileRef: EpubTextContentFileRef(
-              epubBookRef: this,
-              fileName: i.href,
-              contentType: type,
-              contentMimeType: i.mediaType),
-          contentFileName: i.href);
+        epubTextContentFileRef: EpubTextContentFileRef(
+            epubBookRef: this,
+            fileName: i.href,
+            contentType: type,
+            contentMimeType: i.mediaType),
+      );
       result.add(chapterRef);
     }
     return EpubReturnValue(value: result, state: {
@@ -77,7 +75,6 @@ extension ChapterReaderExt on EpubBookRef {
       final chapterRef = EpubChapterRef(
         epubTextContentFileRef: htmlContentFileRef,
         title: navigationPoint.navigationLabels.first.text,
-        contentFileName: contentFileName,
         anchor: anchor,
         subChapters:
             ret.combine(_chapters(navigationPoint.childNavigationPoints))!,

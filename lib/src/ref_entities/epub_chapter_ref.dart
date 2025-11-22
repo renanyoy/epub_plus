@@ -6,14 +6,12 @@ import 'epub_text_content_file_ref.dart';
 class EpubChapterRef {
   final EpubTextContentFileRef? epubTextContentFileRef;
   final String? title;
-  final String? contentFileName;
   final String? anchor;
   final List<EpubChapterRef> subChapters;
 
   const EpubChapterRef({
     this.epubTextContentFileRef,
     this.title,
-    this.contentFileName,
     this.anchor,
     this.subChapters = const <EpubChapterRef>[],
   });
@@ -23,7 +21,6 @@ class EpubChapterRef {
     final hash = const DeepCollectionEquality().hash;
     return epubTextContentFileRef.hashCode ^
         title.hashCode ^
-        contentFileName.hashCode ^
         anchor.hashCode ^
         hash(subChapters);
   }
@@ -35,7 +32,6 @@ class EpubChapterRef {
 
     return other.epubTextContentFileRef == epubTextContentFileRef &&
         other.title == title &&
-        other.contentFileName == contentFileName &&
         other.anchor == anchor &&
         listEquals(other.subChapters, subChapters);
   }
@@ -49,7 +45,6 @@ class EpubChapterRef {
 
   EpubChapter get chapter => EpubChapter(
       title: title,
-      contentFileName: contentFileName,
       anchor: anchor,
       htmlContent: htmlContent,
       subChapters: [...subChapters.chapters]);

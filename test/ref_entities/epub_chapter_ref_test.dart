@@ -12,7 +12,6 @@ Future<void> main() async {
   var reference = EpubChapterRef(
     epubTextContentFileRef: contentFileRef,
     anchor: "anchor",
-    contentFileName: "orthros",
     subChapters: [],
     title: "A New Look at Chapters",
   );
@@ -51,7 +50,6 @@ Future<void> main() async {
         var chapter = EpubChapterRef(
           epubTextContentFileRef: subchapterContentFileRef,
           title: "A Brave new Epub",
-          contentFileName: "orthros.txt",
         );
 
         testChapterRef = testChapterRef.copyWith(subChapters: [chapter]);
@@ -89,7 +87,6 @@ Future<void> main() async {
         var chapter = EpubChapterRef(
           epubTextContentFileRef: subchapterContentFileRef,
           title: "A Brave new Epub",
-          contentFileName: "orthros.txt",
         );
         testChapterRef = testChapterRef.copyWith(subChapters: [chapter]);
         expect(testChapterRef, isNot(reference));
@@ -115,7 +112,6 @@ extension on EpubChapterRef {
       epubTextContentFileRef:
           epubTextContentFileRef ?? this.epubTextContentFileRef,
       anchor: anchor ?? this.anchor,
-      contentFileName: contentFileName ?? this.contentFileName,
       subChapters: subChapters ?? this.subChapters,
       title: title ?? this.title,
     );
