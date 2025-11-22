@@ -22,7 +22,6 @@ class EpubContent {
   @override
   int get hashCode {
     final hash = const DeepCollectionEquality().hash;
-
     return hash(html) ^ hash(css) ^ hash(images) ^ hash(fonts) ^ hash(allFiles);
   }
 
@@ -38,19 +37,19 @@ class EpubContent {
         mapEquals(other.allFiles, allFiles);
   }
 
-  // 4debug
-  T? find<T extends EpubContentFile>(String idRef) {
+  T? find<T extends EpubContentFile>({required String href}) {
     T? file = allFiles.entries
         .where((e) => e.value is T)
-        .firstWhereOrNull((e) => e.key == idRef)
+        .firstWhereOrNull((e) => e.key == href)
         ?.value as T?;
-    file ??= allFiles.entries.whereType()
+    file ??= allFiles.entries
+        .whereType()
         .where((e) => e.value is T)
-        .firstWhereOrNull((e) => e.key.endsWith(idRef))
+        .firstWhereOrNull((e) => e.key.endsWith(href))
         ?.value as T?;
     file ??= allFiles.entries
         .where((e) => e.value is T)
-        .firstWhereOrNull((e) => e.key.contains(idRef))
+        .firstWhereOrNull((e) => e.key.contains(href))
         ?.value as T?;
     return file;
   }

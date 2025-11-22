@@ -21,7 +21,7 @@ class EpubManifest {
     return listEquals(other.items, items);
   }
 
-    factory EpubManifest.fromXml(XmlElement manifestNode) {
+  factory EpubManifest.fromXml(XmlElement manifestNode) {
     final items = <EpubManifestItem>[];
     manifestNode.children
         .whereType<XmlElement>()
@@ -42,7 +42,7 @@ class EpubManifest {
             case 'id':
               id = attributeValue;
             case 'href':
-              href = attributeValue;
+              href = Uri.decodeComponent(attributeValue);
             case 'media-type':
               mediaType = attributeValue;
             case 'media-overlay':
@@ -89,4 +89,12 @@ class EpubManifest {
     return EpubManifest(items: items);
   }
 
+  EpubManifestItem? find({String? id, String? href}) {
+    if (id != null && href != null) {
+      return items.firstWhereOrNull((i) => i.id == id && href == href);
+    }
+    if (id != null) return items.firstWhereOrNull((i) => i.id == id);
+    if (href != null) return items.firstWhereOrNull((i) => i.href == href);
+    return null;
+  }
 }

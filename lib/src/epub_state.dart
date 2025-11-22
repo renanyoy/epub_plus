@@ -1,12 +1,13 @@
 enum EpubState {
   broken,
   missingChapters,
+  spineChapters,
   missingCover,
 }
 
 extension EpubStateExt on Set<EpubState> {
   bool get complete => isEmpty;
-  bool get incomplete => !contains(EpubState.broken);
+  bool get incomplete => isNotEmpty && !contains(EpubState.broken);
   bool get broken => contains(EpubState.broken);
 }
 
@@ -14,6 +15,9 @@ class EpubStateResult {
   final Set<EpubState> state;
   final List<EpubError> errors;
   const EpubStateResult({this.state = const {}, this.errors = const []});
+  @override
+  String toString() => 'state: $state errors: ${errors.messages}';
+  String debugInfo() => 'state: $state\r\n${errors.debugInfo}';
 }
 
 class EpubStateCollection {

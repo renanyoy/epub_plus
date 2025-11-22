@@ -1,24 +1,49 @@
+import 'package:epub_plus/epub_plus.dart';
 import 'package:epub_plus/src/readers/content_reader.dart';
-import 'package:epub_plus/src/epub_state.dart';
-
-import '../ref_entities/epub_book_ref.dart';
-import '../ref_entities/epub_chapter_ref.dart';
 import '../ref_entities/epub_text_content_file_ref.dart';
-import '../schema/navigation/epub_navigation_point.dart';
 
 extension ChapterReaderExt on EpubBookRef {
   EpubReturnValue<List<EpubChapterRef>> get chapters {
-    if (schema!.navigation == null) {
-      return EpubReturnValue(
-          value: <EpubChapterRef>[],
-          state: {EpubState.missingChapters},
-          errors: [EpubError(message: 'no navigation schema')]);
+    if (schema?.navigation?.navMap?.points.isNotEmpty ?? false) {
+      return _chapters(schema!.navigation!.navMap!.points);
     }
-    return getChaptersImpl(this, schema!.navigation!.navMap!.points);
+    if (schema?.package?.spine?.items.isNotEmpty ?? false) {
+      return _spineChapters();
+    }
+    return EpubReturnValue(
+        value: <EpubChapterRef>[],
+        state: {EpubState.missingChapters},
+        errors: [EpubError(message: 'no navigation schema')]);
   }
 
-  static EpubReturnValue<List<EpubChapterRef>> getChaptersImpl(
-      EpubBookRef bookRef, List<EpubNavigationPoint> navigationPoints) {
+  EpubReturnValue<List<EpubChapterRef>> _spineChapters() {
+    final result = <EpubChapterRef>[];
+    final manifest = schema!.package!.manifest!;
+    for (final s in schema!.package!.spine!.items) {
+      final i = manifest.find(id: s.idRef);
+      if (i == null) {
+        continue;
+      }
+      final type = EpubContentType.fromMimeType(i.mediaType!);
+      if (type != EpubContentType.xhtml11) continue;
+      final chapterRef = EpubChapterRef(
+          epubTextContentFileRef: EpubTextContentFileRef(
+              epubBookRef: this,
+              fileName: i.href,
+              contentType: type,
+              contentMimeType: i.mediaType),
+          contentFileName: i.href);
+      result.add(chapterRef);
+    }
+    return EpubReturnValue(value: result, state: {
+      EpubState.spineChapters
+    }, errors: [
+      EpubError(message: 'no navigation chapters, using spine as chapters')
+    ]);
+  }
+
+  EpubReturnValue<List<EpubChapterRef>> _chapters(
+      List<EpubNavigationPoint> navigationPoints) {
     final ret = EpubStateCollection();
     final result = <EpubChapterRef>[];
     for (final navigationPoint in navigationPoints) {
@@ -38,7 +63,7 @@ extension ChapterReaderExt on EpubBookRef {
       }
       contentFileName = Uri.decodeFull(contentFileName!);
       EpubTextContentFileRef? htmlContentFileRef;
-      if (!bookRef.content.html.containsKey(contentFileName)) {
+      if (!content.html.containsKey(contentFileName)) {
         // TODO: try to find file in archive
         ret.add(
             state: {EpubState.missingChapters},
@@ -48,14 +73,14 @@ extension ChapterReaderExt on EpubBookRef {
             ));
         continue;
       }
-      htmlContentFileRef = bookRef.content.html[contentFileName];
+      htmlContentFileRef = content.html[contentFileName];
       final chapterRef = EpubChapterRef(
         epubTextContentFileRef: htmlContentFileRef,
         title: navigationPoint.navigationLabels.first.text,
         contentFileName: contentFileName,
         anchor: anchor,
-        subChapters: ret.combine(
-            getChaptersImpl(bookRef, navigationPoint.childNavigationPoints))!,
+        subChapters:
+            ret.combine(_chapters(navigationPoint.childNavigationPoints))!,
       );
       result.add(chapterRef);
     }

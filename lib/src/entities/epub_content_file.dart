@@ -23,4 +23,7 @@ abstract class EpubContentFile {
         other.contentType == contentType &&
         other.contentMimeType == contentMimeType;
   }
+
+  @override
+  String toString() => 'EpubContentFile(fileName: $fileName, contentType: $contentType, contentMimeType: $contentMimeType)';
 }
