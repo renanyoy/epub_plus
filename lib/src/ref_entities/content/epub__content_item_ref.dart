@@ -8,38 +8,33 @@ import '../../utils/zip_path_utils.dart';
 
 abstract class EpubContentItemRef {
   final EpubBookRef bookRef;
-  final String? fileName;
-  final EpubContentType? contentType;
-  final String? contentMimeType;
+  final String filename;
+  final String mimeType;
 
   const EpubContentItemRef({
     required this.bookRef,
-    this.fileName,
-    this.contentType,
-    this.contentMimeType,
+    required this.filename,
+    required this.mimeType,
   });
 
   @override
   int get hashCode {
     return bookRef.hashCode ^
-        fileName.hashCode ^
-        contentType.hashCode ^
-        contentMimeType.hashCode;
+        filename.hashCode ^
+        mimeType.hashCode;
   }
 
   @override
   bool operator ==(covariant EpubContentItemRef other) {
     if (identical(this, other)) return true;
-
     return other.bookRef == bookRef &&
-        other.fileName == fileName &&
-        other.contentType == contentType &&
-        other.contentMimeType == contentMimeType;
+        other.filename == filename &&
+        other.mimeType == mimeType;
   }
 
   ArchiveFile get file {
     var contentFilePath = ZipPathUtils.combine(
-        bookRef.schema!.contentDirectoryPath, fileName);
+        bookRef.schema!.contentDirectoryPath, filename);
     var contentFileEntry = bookRef.archive.files
         .firstWhereOrNull((ArchiveFile x) => x.name == contentFilePath);
     if (contentFileEntry == null) {
@@ -52,9 +47,9 @@ abstract class EpubContentItemRef {
   Uint8List get content => file.content;
 
   EpubByteContentItem get byteContentFile => EpubByteContentItem(
-        fileName: fileName,
-        contentType: contentType,
-        contentMimeType: contentMimeType,
+        filename: filename,
+        mimeType: mimeType,
+        contentType: EpubContentType.fromMimeType(mimeType),
         content: content,
       );
 }

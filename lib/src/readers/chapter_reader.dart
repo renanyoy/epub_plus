@@ -28,9 +28,8 @@ extension ChapterReaderExt on EpubBookRef {
       final chapterRef = EpubChapterRef(
         epubTextContentFileRef: EpubTextContentItemRef(
             bookRef: this,
-            fileName: i.href,
-            contentType: type,
-            contentMimeType: i.mediaType),
+            filename: i.href!,
+            mimeType: i.mediaType!),
       );
       result.add(chapterRef);
     }

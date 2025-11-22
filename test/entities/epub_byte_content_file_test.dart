@@ -8,9 +8,9 @@ import 'package:test/test.dart';
 Future<void> main() async {
   var reference = EpubByteContentItem(
     content: Uint8List.fromList([0, 1, 2, 3]),
-    contentMimeType: "application/test",
+    mimeType: "application/test",
     contentType: EpubContentType.other,
-    fileName: "orthrosFile",
+    filename: "orthrosFile",
   );
 
   late EpubByteContentItem testFile;
@@ -30,7 +30,7 @@ Future<void> main() async {
     });
 
     test(".equals is false when ContentMimeType changes", () async {
-      testFile = testFile.copyWith(contentMimeType: "application/different");
+      testFile = testFile.copyWith(mimeType: "application/different");
       expect(testFile, isNot(reference));
     });
 
@@ -40,7 +40,7 @@ Future<void> main() async {
     });
 
     test(".equals is false when FileName changes", () async {
-      testFile = testFile.copyWith(fileName: "a_different_file_name");
+      testFile = testFile.copyWith(filename: "a_different_file_name");
       expect(testFile, isNot(reference));
     });
 
@@ -54,7 +54,7 @@ Future<void> main() async {
     });
 
     test('.hashCode changes when ContentMimeType changes', () async {
-      testFile = testFile.copyWith(contentMimeType: "application/different");
+      testFile = testFile.copyWith(mimeType: "application/different");
       expect(testFile.hashCode, isNot(reference.hashCode));
     });
 
@@ -64,7 +64,7 @@ Future<void> main() async {
     });
 
     test('.hashCode changes when FileName changes', () async {
-      testFile = testFile.copyWith(fileName: "a_different_file_name");
+      testFile = testFile.copyWith(filename: "a_different_file_name");
       expect(testFile.hashCode, isNot(reference.hashCode));
     });
   });
@@ -73,15 +73,15 @@ Future<void> main() async {
 extension on EpubByteContentItem {
   EpubByteContentItem copyWith({
     Uint8List? content,
-    String? contentMimeType,
+    String? mimeType,
     EpubContentType? contentType,
-    String? fileName,
+    String? filename,
   }) {
     return EpubByteContentItem(
       content: content ?? this.content,
-      contentMimeType: contentMimeType ?? this.contentMimeType,
+      mimeType: mimeType ?? this.mimeType,
       contentType: contentType ?? this.contentType,
-      fileName: fileName ?? this.fileName,
+      filename: filename ?? this.filename,
     );
   }
 }

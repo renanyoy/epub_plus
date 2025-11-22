@@ -28,8 +28,8 @@ extension ContentReaderExt on EpubBookRef {
         case EpubContentType.dtbookNCX:
           var epubTextContentFile = EpubTextContentItemRef(
             bookRef: this,
-            fileName: decodeUri(fileName),
-            contentMimeType: contentMimeType,
+            filename: decodeUri(fileName),
+            mimeType: contentMimeType,
           );
 
           switch (contentType) {
@@ -44,9 +44,8 @@ extension ContentReaderExt on EpubBookRef {
         default:
           var epubByteContentFile = EpubByteContentFileRef(
             bookRef: this,
-            fileName: decodeUri(fileName),
-            contentMimeType: contentMimeType,
-            contentType: contentType,
+            filename: decodeUri(fileName),
+            mimeType: contentMimeType,
           );
 
           switch (contentType) {

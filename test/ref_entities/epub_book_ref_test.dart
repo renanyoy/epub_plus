@@ -2,8 +2,6 @@ library;
 
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
-import 'package:epub_plus/src/ref_entities/epub_content_ref.dart';
-import 'package:epub_plus/src/ref_entities/content/epub_text_content_item_ref.dart';
 import 'package:test/test.dart';
 
 Future<void> main() async {
@@ -26,23 +24,6 @@ Future<void> main() async {
     group(".equals", () {
       test("is true for equivalent objects", () async {
         expect(testBookRef, equals(reference));
-      });
-
-      test("is false when Content changes", () async {
-        var file = EpubTextContentItemRef(
-          bookRef: testBookRef,
-          contentMimeType: "application/txt",
-          contentType: EpubContentType.other,
-          fileName: "orthros.txt",
-        );
-
-        EpubContentRef content = EpubContentRef(
-          allFiles: {"hello": file},
-        );
-
-        testBookRef = testBookRef.copyWith(content: content);
-
-        expect(testBookRef, isNot(reference));
       });
 
       test("is false when Author changes", () async {
@@ -73,24 +54,6 @@ Future<void> main() async {
       test("is true for equivalent objects", () async {
         expect(testBookRef.hashCode, equals(reference.hashCode));
       });
-
-      test("is false when Content changes", () async {
-        var file = EpubTextContentItemRef(
-          bookRef: testBookRef,
-          contentMimeType: "application/txt",
-          contentType: EpubContentType.other,
-          fileName: "orthros.txt",
-        );
-
-        EpubContentRef content = EpubContentRef(
-          allFiles: {"hello": file},
-        );
-
-        testBookRef = testBookRef.copyWith(content: content);
-
-        expect(testBookRef, isNot(reference));
-      });
-
       test("is false when Author changes", () async {
         testBookRef = testBookRef.copyWith(author: "NotOrthros");
         expect(testBookRef.hashCode, isNot(reference.hashCode));
@@ -117,20 +80,4 @@ Future<void> main() async {
 }
 
 extension on EpubBookRef {
-  EpubBookRef copyWith({
-    Archive? archive,
-    String? title,
-    List<String>? authors,
-    String? author,
-    EpubSchema? schema,
-    EpubContentRef? content,
-  }) {
-    return EpubBookRef(
-      archive: archive ?? this.archive,
-      title: title ?? this.title,
-      authors: authors ?? this.authors,
-      author: author ?? this.author,
-      schema: schema ?? this.schema      
-    );
-  }
 }

@@ -27,9 +27,9 @@ Future<void> main() async {
       test("is false when Content changes", () async {
         var file = EpubTextContentItem(
           content: "Hello",
-          contentMimeType: "application/txt",
+          mimeType: "application/txt",
           contentType: EpubContentType.other,
-          fileName: "orthros.txt",
+          filename: "orthros.txt",
         );
 
         EpubContent content = EpubContent(
@@ -81,9 +81,9 @@ Future<void> main() async {
       test("is false when Content changes", () async {
         var file = EpubTextContentItem(
           content: "Hello",
-          contentMimeType: "application/txt",
+          mimeType: "application/txt",
           contentType: EpubContentType.other,
-          fileName: "orthros.txt",
+          filename: "orthros.txt",
         );
 
         EpubContent content = EpubContent(

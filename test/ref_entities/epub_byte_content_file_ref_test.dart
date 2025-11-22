@@ -11,9 +11,8 @@ Future<void> main() async {
 
   var reference = EpubByteContentFileRef(
     bookRef: ref,
-    contentMimeType: "application/test",
-    contentType: EpubContentType.other,
-    fileName: "orthrosFile",
+    mimeType: "application/test",
+    filename: "orthrosFile",
   );
 
   late EpubByteContentFileRef testFileRef;
@@ -33,17 +32,12 @@ Future<void> main() async {
 
       test("is false when ContentMimeType changes", () async {
         testFileRef =
-            testFileRef.copyWith(contentMimeType: "application/different");
-        expect(testFileRef, isNot(reference));
-      });
-
-      test("is false when ContentType changes", () async {
-        testFileRef = testFileRef.copyWith(contentType: EpubContentType.css);
+            testFileRef.copyWith(mimeType: "application/different");
         expect(testFileRef, isNot(reference));
       });
 
       test("is false when FileName changes", () async {
-        testFileRef = testFileRef.copyWith(fileName: "a_different_file_name");
+        testFileRef = testFileRef.copyWith(filename: "a_different_file_name");
         expect(testFileRef, isNot(reference));
       });
     });
@@ -55,35 +49,15 @@ Future<void> main() async {
 
       test('changes when ContentMimeType changes', () async {
         testFileRef =
-            testFileRef.copyWith(contentMimeType: "application/different");
-        expect(testFileRef.hashCode, isNot(reference.hashCode));
-      });
-
-      test('changes when ContentType changes', () async {
-        testFileRef = testFileRef.copyWith(contentType: EpubContentType.css);
+            testFileRef.copyWith(mimeType: "application/different");
         expect(testFileRef.hashCode, isNot(reference.hashCode));
       });
 
       test('changes when FileName changes', () async {
-        testFileRef = testFileRef.copyWith(fileName: "a_different_file_name");
+        testFileRef = testFileRef.copyWith(filename: "a_different_file_name");
         expect(testFileRef.hashCode, isNot(reference.hashCode));
       });
     });
   });
 }
 
-extension on EpubByteContentFileRef {
-  EpubByteContentFileRef copyWith({
-    EpubBookRef? bookRef,
-    String? contentMimeType,
-    EpubContentType? contentType,
-    String? fileName,
-  }) {
-    return EpubByteContentFileRef(
-      bookRef: bookRef ?? this.bookRef,
-      contentMimeType: contentMimeType ?? this.contentMimeType,
-      contentType: contentType ?? this.contentType,
-      fileName: fileName ?? this.fileName,
-    );
-  }
-}

@@ -36,4 +36,19 @@ class EpubBookRef {
         listEquals(other.authors, authors) &&
         other.schema == schema;
   }
+
+  EpubBookRef copyWith({
+    Archive? archive,
+    String? title,
+    List<String>? authors,
+    String? author,
+    EpubSchema? schema,
+  }) {
+    return EpubBookRef(
+        archive: archive ?? this.archive,
+        title: title ?? this.title,
+        authors: authors ?? this.authors,
+        author: author ?? this.author,
+        schema: schema ?? this.schema);
+  }
 }

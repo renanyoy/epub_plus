@@ -8,16 +8,16 @@ import 'epub__content_item.dart';
 class EpubByteContentItem extends EpubContentItem {
   final Uint8List content;
   const EpubByteContentItem({
-    super.fileName,
-    super.contentMimeType,
-    super.contentType,
+    required super.filename,
+    required super.mimeType,
+    required super.contentType,
     required this.content,
   });
 
   @override
   int get hashCode =>
-      fileName.hashCode ^
-      contentMimeType.hashCode ^
+      filename.hashCode ^
+      mimeType.hashCode ^
       contentType.hashCode ^
       const DeepCollectionEquality().hash(content);
 
@@ -26,8 +26,8 @@ class EpubByteContentItem extends EpubContentItem {
     if (identical(this, other)) return true;
     final listEquals = const DeepCollectionEquality().equals;
 
-    return fileName == other.fileName &&
-        contentMimeType == other.contentMimeType &&
+    return filename == other.filename &&
+        mimeType == other.mimeType &&
         contentType == other.contentType &&
         listEquals(content, other.content);
   }

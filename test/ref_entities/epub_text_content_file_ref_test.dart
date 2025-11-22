@@ -11,9 +11,8 @@ Future<void> main() async {
 
   var reference = EpubTextContentItemRef(
     bookRef: epubRef,
-    contentMimeType: "application/test",
-    contentType: EpubContentType.other,
-    fileName: "orthrosFile",
+    mimeType: "application/test",
+    filename: "orthrosFile",
   );
 
   late EpubTextContentItemRef testFile;
@@ -32,17 +31,12 @@ Future<void> main() async {
       });
 
       test("is false when ContentMimeType changes", () async {
-        testFile = testFile.copyWith(contentMimeType: "application/different");
-        expect(testFile, isNot(reference));
-      });
-
-      test("is false when ContentType changes", () async {
-        testFile = testFile.copyWith(contentType: EpubContentType.css);
+        testFile = testFile.copyWith(mimeType: "application/different");
         expect(testFile, isNot(reference));
       });
 
       test("is false when FileName changes", () async {
-        testFile = testFile.copyWith(fileName: "a_different_file_name");
+        testFile = testFile.copyWith(filename: "a_different_file_name");
         expect(testFile, isNot(reference));
       });
     });
@@ -52,17 +46,12 @@ Future<void> main() async {
       });
 
       test('changes when ContentMimeType changes', () async {
-        testFile = testFile.copyWith(contentMimeType: "application/different");
-        expect(testFile.hashCode, isNot(reference.hashCode));
-      });
-
-      test('changes when ContentType changes', () async {
-        testFile = testFile.copyWith(contentType: EpubContentType.css);
+        testFile = testFile.copyWith(mimeType: "application/different");
         expect(testFile.hashCode, isNot(reference.hashCode));
       });
 
       test('changes when FileName changes', () async {
-        testFile = testFile.copyWith(fileName: "a_different_file_name");
+        testFile = testFile.copyWith(filename: "a_different_file_name");
         expect(testFile.hashCode, isNot(reference.hashCode));
       });
     });

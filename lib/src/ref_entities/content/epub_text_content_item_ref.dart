@@ -7,26 +7,21 @@ import 'dart:convert' as convert;
 class EpubTextContentItemRef extends EpubContentItemRef {
   EpubTextContentItemRef({
     required super.bookRef,
-    super.fileName,
-    super.contentMimeType,
-    super.contentType,
+    required super.filename,
+    required super.mimeType,
   });
 
   @override
   int get hashCode =>
-      bookRef.hashCode ^
-      fileName.hashCode ^
-      contentMimeType.hashCode ^
-      contentType.hashCode;
+      bookRef.hashCode ^ filename.hashCode ^ mimeType.hashCode;
 
   @override
   bool operator ==(covariant EpubTextContentItemRef other) {
     if (identical(this, other)) return true;
 
     return other.bookRef == bookRef &&
-        other.fileName == fileName &&
-        other.contentMimeType == contentMimeType &&
-        other.contentType == contentType;
+        other.filename == filename &&
+        other.mimeType == mimeType;
   }
 
   String get asText {
@@ -42,9 +37,9 @@ class EpubTextContentItemRef extends EpubContentItemRef {
 
   EpubTextContentItem get textContentFile {
     final result = EpubTextContentItem(
-      fileName: fileName,
-      contentType: contentType,
-      contentMimeType: contentMimeType,
+      filename: filename,
+      mimeType: mimeType,
+      contentType: EpubContentType.fromMimeType(mimeType),
       content: asText,
     );
     return result;
@@ -52,15 +47,13 @@ class EpubTextContentItemRef extends EpubContentItemRef {
 
   EpubTextContentItemRef copyWith({
     EpubBookRef? bookRef,
-    String? contentMimeType,
-    EpubContentType? contentType,
-    String? fileName,
+    String? mimeType,
+    String? filename,
   }) {
     return EpubTextContentItemRef(
       bookRef: bookRef ?? this.bookRef,
-      contentMimeType: contentMimeType ?? this.contentMimeType,
-      contentType: contentType ?? this.contentType,
-      fileName: fileName ?? this.fileName,
+      mimeType: mimeType ?? this.mimeType,
+      filename: filename ?? this.filename,
     );
   }
 }

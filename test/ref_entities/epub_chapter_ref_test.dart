@@ -8,7 +8,10 @@ import 'package:test/test.dart';
 Future<void> main() async {
   var arch = Archive();
   var bookRef = EpubBookRef(archive: arch);
-  var contentFileRef = EpubTextContentItemRef(bookRef: bookRef);
+  var contentFileRef = EpubTextContentItemRef(
+      bookRef: bookRef,
+      filename: 'page1.xhtml',
+      mimeType: 'application/xhtml+xml');
   var reference = EpubChapterRef(
     epubTextContentFileRef: contentFileRef,
     anchor: "anchor",
@@ -22,10 +25,17 @@ Future<void> main() async {
   setUp(() async {
     var arch2 = Archive();
     bookRef2 = EpubBookRef(archive: arch2);
-    var contentFileRef2 = EpubTextContentItemRef(bookRef: bookRef2);
+    var contentFileRef2 = EpubTextContentItemRef(
+        bookRef: bookRef2,
+        filename: 'page1.xhtml',
+        mimeType: 'application/xhtml+xml');
 
-    testChapterRef =
-        reference.copyWith(epubTextContentFileRef: contentFileRef2);
+    testChapterRef = reference.copyWith(
+      epubTextContentFileRef: contentFileRef2,
+      anchor: "anchor",
+      subChapters: [],
+      title: "A New Look at Chapters",
+    );
   });
 
   group("EpubChapterRef", () {
@@ -39,14 +49,11 @@ Future<void> main() async {
         expect(testChapterRef, isNot(reference));
       });
 
-      test("is false when ContentFileName changes", () async {
-        testChapterRef = testChapterRef.copyWith(contentFileName: "NotOrthros");
-        expect(testChapterRef, isNot(reference));
-      });
-
       test("is false when SubChapters changes", () async {
-        var subchapterContentFileRef =
-            EpubTextContentItemRef(bookRef: bookRef2);
+        var subchapterContentFileRef = EpubTextContentItemRef(
+            bookRef: bookRef2,
+            filename: 'page3.xhtml',
+            mimeType: 'application/xhtml+xml');
         var chapter = EpubChapterRef(
           epubTextContentFileRef: subchapterContentFileRef,
           title: "A Brave new Epub",
@@ -76,14 +83,9 @@ Future<void> main() async {
         expect(testChapterRef.hashCode, isNot(reference.hashCode));
       });
 
-      test("is false when ContentFileName changes", () async {
-        testChapterRef = testChapterRef.copyWith(contentFileName: "NotOrthros");
-        expect(testChapterRef.hashCode, isNot(reference.hashCode));
-      });
-
       test("is false when SubChapters changes", () async {
-        var subchapterContentFileRef =
-            EpubTextContentItemRef(bookRef: bookRef2);
+        var subchapterContentFileRef = EpubTextContentItemRef(
+            bookRef: bookRef2, filename: 'page4.txt', mimeType: 'text/plain');
         var chapter = EpubChapterRef(
           epubTextContentFileRef: subchapterContentFileRef,
           title: "A Brave new Epub",
@@ -98,22 +100,4 @@ Future<void> main() async {
       });
     });
   });
-}
-
-extension on EpubChapterRef {
-  EpubChapterRef copyWith({
-    EpubTextContentItemRef? epubTextContentFileRef,
-    String? anchor,
-    String? contentFileName,
-    List<EpubChapterRef>? subChapters,
-    String? title,
-  }) {
-    return EpubChapterRef(
-      epubTextContentFileRef:
-          epubTextContentFileRef ?? this.epubTextContentFileRef,
-      anchor: anchor ?? this.anchor,
-      subChapters: subChapters ?? this.subChapters,
-      title: title ?? this.title,
-    );
-  }
 }

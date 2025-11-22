@@ -63,10 +63,10 @@ void main(List<String> args) async {
       images?.values.firstOrNull; // Get the first image in the book
 
   // Content type (e.g. EpubContentType.IMAGE_JPEG, EpubContentType.IMAGE_PNG)
-  EpubContentType contentType = firstImage!.contentType!;
+  EpubContentType contentType = firstImage!.contentType;
 
   // MIME type (e.g. "image/jpeg", "image/png")
-  String mimeContentType = firstImage.contentMimeType!;
+  String mimeContentType = firstImage.mimeType;
 
   // HTML & CSS
 

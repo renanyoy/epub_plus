@@ -1,5 +1,5 @@
 name: epub_plus
-description: Epub Parser for dart. Works on server, web or flutter. Refactored and heavily tested fork. 
+description: Epub parser & writer for dart. For server, web or flutter. Refactored fork. 
 homepage: https://github.com/renanyoy/epub_plus
 issue_tracker: https://github.com/renanyoy/epub_plus/issues
 version: 6.0.0

@@ -17,16 +17,16 @@ Future<void> main() async {
 
     textContentFile = EpubTextContentItem(
       content: "Some string",
-      contentMimeType: "application/text",
+      mimeType: "application/text",
       contentType: EpubContentType.other,
-      fileName: "orthros.txt",
+      filename: "orthros.txt",
     );
 
     byteContentFile = EpubByteContentItem(
       content: Uint8List.fromList([0, 1, 2, 3]),
-      contentMimeType: "application/orthros",
+      mimeType: "application/orthros",
       contentType: EpubContentType.other,
-      fileName: "orthros.bin",
+      filename: "orthros.bin",
     );
   });
 

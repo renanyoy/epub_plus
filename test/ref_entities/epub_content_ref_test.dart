@@ -23,16 +23,14 @@ Future<void> main() async {
 
     textContentFile = EpubTextContentItemRef(
       bookRef: refBook,
-      contentMimeType: "application/text",
-      contentType: EpubContentType.other,
-      fileName: "orthros.txt",
+      mimeType: "application/text",
+      filename: "orthros.txt",
     );
 
     byteContentFile = EpubByteContentFileRef(
       bookRef: refBook,
-      contentMimeType: "application/orthros",
-      contentType: EpubContentType.other,
-      fileName: "orthros.bin",
+      mimeType: "application/orthros",
+      filename: "orthros.bin",
     );
   });
 
