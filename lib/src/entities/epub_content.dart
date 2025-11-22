@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 
 import 'content/epub_byte_content_item.dart';
-import 'content/epub_content_item.dart';
+import 'content/epub__content_item.dart';
 import 'content/epub_text_content_item.dart';
 
 class EpubContent {

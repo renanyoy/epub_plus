@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 
 import '../entities/epub_content.dart';
-import '../entities/content/epub_content_item.dart';
+import '../entities/content/epub__content_item.dart';
 import 'content/epub_byte_content_item_ref.dart';
-import 'content/epub_content_item_ref.dart';
+import 'content/epub__content_item_ref.dart';
 import 'content/epub_text_content_item_ref.dart';
 
 class EpubContentRef {

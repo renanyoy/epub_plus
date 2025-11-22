@@ -1,7 +1,7 @@
-import '../../entities/content/epub_content_type.dart';
+import '../../entities/content/epub__content_type.dart';
 import '../../entities/content/epub_text_content_item.dart';
 import '../epub_book_ref.dart';
-import 'epub_content_item_ref.dart';
+import 'epub__content_item_ref.dart';
 import 'dart:convert' as convert;
 
 class EpubTextContentItemRef extends EpubContentItemRef {

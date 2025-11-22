@@ -1,7 +1,7 @@
-import '../entities/content/epub_content_type.dart';
+import '../entities/content/epub__content_type.dart';
 import '../ref_entities/epub_book_ref.dart';
 import '../ref_entities/content/epub_byte_content_item_ref.dart';
-import '../ref_entities/content/epub_content_item_ref.dart';
+import '../ref_entities/content/epub__content_item_ref.dart';
 import '../ref_entities/epub_content_ref.dart';
 import '../ref_entities/content/epub_text_content_item_ref.dart';
 import '../utils/uri_decode.dart';

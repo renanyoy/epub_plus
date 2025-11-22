@@ -1,8 +1,7 @@
-# epub_plus
+# epub_plus_plus
 
-It package is [dart-epub](https://github.com/orthros/dart-epub) fork
+This package is [epub_plus](https://github.com/4akloon/epub_plus) fork
 
-[Flutter UI implementation](https://pub.dev/packages/epub_view)
 
 Epub Reader and Writer for Dart inspired by [this fantastic C# Epub Reader](https://github.com/versfx/EpubReader)
 

@@ -3,7 +3,7 @@ library;
 import 'package:archive/archive.dart';
 import 'package:epub_plus/epub_plus.dart';
 import 'package:epub_plus/src/ref_entities/content/epub_byte_content_item_ref.dart';
-import 'package:epub_plus/src/ref_entities/content/epub_content_item_ref.dart';
+import 'package:epub_plus/src/ref_entities/content/epub__content_item_ref.dart';
 import 'package:epub_plus/src/ref_entities/epub_content_ref.dart';
 import 'package:epub_plus/src/ref_entities/content/epub_text_content_item_ref.dart';
 import 'package:test/test.dart';

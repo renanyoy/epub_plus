@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:image/image.dart';
 
-import 'epub_content_item.dart';
+import 'epub__content_item.dart';
 
 class EpubByteContentItem extends EpubContentItem {
   final Uint8List content;

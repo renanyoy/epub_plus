@@ -1,4 +1,4 @@
-import 'epub_content_item.dart';
+import 'epub__content_item.dart';
 
 class EpubTextContentItem extends EpubContentItem {
   final String content;
